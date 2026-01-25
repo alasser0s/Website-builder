@@ -845,7 +845,7 @@ export function validateNode(node: BlueprintNode, isRoot = false, collector?: Va
     }
   }
 
-    // Header: enforce slots.logo[] and slots.right[] single-item arrays of ids and referential integrity
+  // Header: enforce slots.logo[] and slots.right[] single-item arrays of ids and referential integrity
   if (node.type === 'header') {
     const h = node as HeaderNode;
     if (!h.slots || !Array.isArray(h.slots.logo) || !Array.isArray(h.slots.right)) {
@@ -901,7 +901,7 @@ export function validateNode(node: BlueprintNode, isRoot = false, collector?: Va
                 errors.push(`navItem(${item.id}) newTab must be boolean when provided`);
               }
             } else {
-              errors.push(`navItem(${item.id}) kind invalid`);
+              errors.push(`navItem(${(item as any).id}) kind invalid`);
             }
           }
         }
@@ -991,7 +991,7 @@ export function validateNode(node: BlueprintNode, isRoot = false, collector?: Va
                 errors.push(`Footer ${label}(${item.id}) newTab must be boolean when provided`);
               }
             } else {
-              errors.push(`Footer ${label}(${item.id}) kind invalid`);
+              errors.push(`Footer ${label}(${(item as any).id}) kind invalid`);
             }
           }
         }

@@ -13,7 +13,6 @@ export const header_example: BlueprintStateSnapshot = {
         id: 'header1',
         type: 'header',
         children: [],
-        // @ts-expect-error dynamic shape
         slots: { logo: ['logo1'], right: ['r1'] },
         data: {
           navItems: [
@@ -43,7 +42,6 @@ export const footer_example: BlueprintStateSnapshot = {
         id: 'footer1',
         type: 'footer',
         children: [],
-        // @ts-expect-error dynamic shape
         columns: [
           { id: 'c1', content: ['f1', 'f2'] },
           { id: 'c2', content: ['f3'] },
@@ -71,7 +69,6 @@ export const not_found_example: BlueprintStateSnapshot = {
         id: 'header_404',
         type: 'header',
         children: [],
-        // @ts-expect-error dynamic shape
         slots: { logo: [], right: [] },
         data: {
           navItems: [

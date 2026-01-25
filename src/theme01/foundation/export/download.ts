@@ -38,8 +38,8 @@ export function triggerSnapshotDownload(
   const { filename, blob } = prepareSnapshotDownload(snapshot, slug);
 
   const navigatorRef = deps.navigator ?? (typeof navigator !== 'undefined' ? navigator : undefined);
-  if (navigatorRef?.msSaveOrOpenBlob) {
-    navigatorRef.msSaveOrOpenBlob(blob, filename);
+  if (navigatorRef && (navigatorRef as any).msSaveOrOpenBlob) {
+    (navigatorRef as any).msSaveOrOpenBlob(blob, filename);
     return { filename };
   }
 

@@ -130,9 +130,9 @@ function coreReducer(history: HistoryState, action: BlueprintAction): HistorySta
       }
       if (typeof index === 'number') {
         const clamped = Math.max(0, Math.min(index, parentNode.children.length));
-        parentNode.children.splice(clamped, 0, newChild);
+        (parentNode.children as BlueprintNode[]).splice(clamped, 0, newChild);
       } else {
-        parentNode.children.push(newChild);
+        (parentNode.children as BlueprintNode[]).push(newChild);
       }
       syncContent(parentNode);
       validateTree(snapshot);

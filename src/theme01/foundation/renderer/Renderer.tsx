@@ -174,13 +174,13 @@ function useBlueprintActions(): BlueprintActionsContext {
 function useDnd() {
   const ctx = useContext(BlueprintContext);
   if (!ctx) throw new Error('BlueprintProvider is missing');
-  return ctx.dnd ?? { state: {}, beginDrag: () => {}, endDrag: () => {} };
+  return ctx.dnd ?? { state: {}, beginDrag: () => { }, endDrag: () => { } };
 }
 
 function useNav() {
   const ctx = useContext(BlueprintContext);
   if (!ctx) throw new Error('BlueprintProvider is missing');
-  return ctx.nav ?? { currentPath: '/', navigate: () => {} };
+  return ctx.nav ?? { currentPath: '/', navigate: () => { } };
 }
 
 interface RendererProps {
@@ -1900,10 +1900,10 @@ const renderSelect: RegistryView = ({ node }) => {
   const rawOptions = Array.isArray(data?.options) ? data.options : [];
   const normalizedOptions = rawOptions.length > 0
     ? rawOptions.map((option, index) => {
-        const value = typeof option?.value === 'string' && option.value.trim() !== '' ? option.value.trim() : `option-${index + 1}`;
-        const optionLabel = typeof option?.label === 'string' && option.label.trim() !== '' ? option.label.trim() : value;
-        return { value, label: optionLabel };
-      })
+      const value = typeof option?.value === 'string' && option.value.trim() !== '' ? option.value.trim() : `option-${index + 1}`;
+      const optionLabel = typeof option?.label === 'string' && option.label.trim() !== '' ? option.label.trim() : value;
+      return { value, label: optionLabel };
+    })
     : [{ value: 'option-1', label: 'Option' }];
   const defaultValue = normalizedOptions[0]?.value ?? '';
 
@@ -2124,7 +2124,7 @@ type NormalizedHoursEntry = {
 function normalizeHoursRanges(ranges: OpeningHoursRange[] | undefined): OpeningHoursRange[] {
   if (!Array.isArray(ranges)) return [];
   return ranges
-    .map((range) => {
+    .map((range): OpeningHoursRange | null => {
       const start = typeof range?.start === 'string' ? range.start.trim() : '';
       const end = typeof range?.end === 'string' ? range.end.trim() : '';
       if (!start && !end) return null;
