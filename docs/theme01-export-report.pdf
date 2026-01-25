@@ -1,0 +1,61 @@
+%PDF-1.4
+1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj
+2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj
+3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >> endobj
+4 0 obj << /Length 1347 >> stream
+BT
+/F1 12 Tf
+14 TL
+72 720 Td
+(Theme01 Export Story Technical Report) Tj
+T*
+() Tj
+T*
+(Scope: JSON export validation, naming, download, and CI verification for theme01 blueprint exports.) Tj
+T*
+() Tj
+T*
+(Task Overview:) Tj
+T*
+(1\) EX-VALIDATE: Added ValidationIssue collector to validators, created export validation helper, and covered aggregated errors with vitest.) Tj
+T*
+(2\) EX-FILENAME: Added slug normalization + filename builder and verified conventions via tests.) Tj
+T*
+(3\) EX-PRETTY-PRINT & DOWNLOAD: Implemented pretty-print serialization, download helpers with cross-browser fallback, and unit coverage.) Tj
+T*
+(4\) EX-CI: Added vitest that scans docs/exports JSON files and enforces validateTree.) Tj
+T*
+() Tj
+T*
+(Testing:) Tj
+T*
+(- npm run test -- --run src/theme01/foundation/__tests__/export_validation.test.tsx) Tj
+T*
+(- npm run test -- --run src/theme01/foundation/__tests__/export_naming.test.tsx) Tj
+T*
+(- npm run test -- --run src/theme01/foundation/__tests__/export_download.test.tsx) Tj
+T*
+(- npm run test -- --run src/theme01/foundation/__tests__/export_ci.test.ts) Tj
+T*
+() Tj
+T*
+(Next Steps Recommendations:) Tj
+T*
+(- Wire export helpers into the UI flow and add real snapshots under docs/exports for CI coverage.) Tj
+T*
+(- Add README instructions describing the one-click export workflow and troubleshooting tips.) Tj
+ET
+endstream endobj
+5 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000001640 00000 n 
+trailer << /Size 6 /Root 1 0 R >>
+startxref
+1710
+%%EOF
