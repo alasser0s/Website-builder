@@ -19,6 +19,14 @@
     "react-dom": "^19.1.1",
     "react-router-dom": "^6.30.1"
   },
+  "overrides": {
+    "@storybook/react-vite": {
+      "vite": "$vite"
+    },
+    "@storybook/builder-vite": {
+      "vite": "$vite"
+    }
+  },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
     "@storybook/addon-a11y": "^8.6.14",
