@@ -10,323 +10,138 @@ interface TextEditorPopupProps {
 }
 
 const FONT_FAMILY_OPTIONS = [
-    { value: 'inherit', label: 'الخط' },
-    { value: 'Cairo', label: 'Cairo' },
-    { value: 'Tajawal', label: 'Tajawal' },
-    { value: 'Almarai', label: 'Almarai' },
-    { value: 'IBM Plex Sans Arabic', label: 'IBM Plex Sans' },
-    { value: 'Noto Sans Arabic', label: 'Noto Sans' },
-    { value: 'Inter', label: 'Inter' },
-    { value: 'Roboto', label: 'Roboto' },
+    { label: 'Default', value: 'font-sans' },
+    { label: 'Serif', value: 'font-serif' },
+    { label: 'Mono', value: 'font-mono' },
 ];
 
-const FONT_SIZE_MAP: Record<string, number> = {
-    xs: 12,
-    sm: 14,
-    base: 16,
-    lg: 18,
-    xl: 20,
-    '2xl': 24,
-    '3xl': 30,
-    '4xl': 36,
-    '5xl': 48,
-    '6xl': 60,
+const COLORS = [
+    '#000000', '#ffffff', '#ef4444', '#f97316', '#f59e0b', '#84cc16', '#10b981', '#06b6d4', '#3b82f6', '#6366f1', '#8b5cf6', '#d946ef', '#f43f5e'
+];
+
+// Helper to safely get font size number
+const getFontSizeValue = (val: unknown): number => {
+    if (typeof val === 'number') return val;
+    if (typeof val === 'string' && val.endsWith('px')) return parseInt(val, 10);
+    return 16; // default
 };
 
-// FONT_SIZE_OPTIONS removed - no longer used since we store raw numeric values
-
-function getFontSizeValue(size: string): number {
-    return FONT_SIZE_MAP[size] ?? (parseInt(size, 10) || 16);
-}
-
-// Note: getSizeToken was removed as we now store raw numeric fontSize values
-
-export function TextEditorPopup({
+export function TextHoverToolbar({
     nodeId,
     styles,
     onUpdateStyles,
     position,
     onClose,
 }: TextEditorPopupProps) {
-    const currentFontFamily = (styles.fontFamily as string) ?? 'inherit';
-    const currentFontSize = styles.fontSize ?? 'base';
-    // unused vars removed: currentFontWeight, currentTextDecoration, currentFontStyle
-    const currentTextAlign = (styles.textAlign as string) ?? 'start';
-    const currentColor = (styles.color as string) ?? '#000000';
-    const currentBgColor = (styles.backgroundColor as string) ?? 'transparent';
+    // --- HELPER FUNCTIONS FOR CSS STRINGS ---
+    const isBold = (s: any) => s.fontWeight === 'bold' || s.fontWeight === 700 || s.fontWeight === '700';
+    const isItalic = (s: any) => s.fontStyle === 'italic';
+    const isUnderline = (s: any) => s.textDecoration === 'underline';
 
-    // Handle both numeric and string fontSize values
-    const fontSizeNum = typeof currentFontSize === 'number'
-        ? currentFontSize
-        : getFontSizeValue(String(currentFontSize));
+    const currentFontSize = getFontSizeValue(styles.fontSize);
+    const currentColor = (styles.color as string) || '#000000';
+    const currentAlign = (styles.textAlign as string) || 'left';
 
-    const setStyle = (patch: Record<string, unknown>) => {
-        onUpdateStyles(nodeId, patch);
+    const setStyle = (newStyles: Record<string, unknown>) => {
+        onUpdateStyles(nodeId, { ...styles, ...newStyles });
     };
 
-    // Helper functions for style checks
-    const checkBold = (s: any) => s.fontWeight === 'bold' || s.fontWeight === 700 || s.fontWeight === '700';
-    const checkItalic = (s: any) => s.fontStyle === 'italic';
-    const checkUnderline = (s: any) => s.textDecoration === 'underline';
-    const checkStrikethrough = (s: any) => s.textDecoration === 'line-through';
-
-    const isBold = checkBold(styles);
-    const isItalic = checkItalic(styles);
-    const isUnderline = checkUnderline(styles);
-    const isStrikethrough = checkStrikethrough(styles);
-
+    // --- UPDATED TOGGLES (THE FIX) ---
     const toggleBold = () => {
-        const newValue = isBold ? 'normal' : 'bold';
-        onUpdateStyles(nodeId, { ...styles, fontWeight: newValue });
+        // Send 'bold' or 'normal' (CSS valid strings), NOT true/false
+        setStyle({ fontWeight: isBold(styles) ? 'normal' : 'bold' });
     };
 
     const toggleItalic = () => {
-        const newValue = isItalic ? 'normal' : 'italic';
-        onUpdateStyles(nodeId, { ...styles, fontStyle: newValue });
+        setStyle({ fontStyle: isItalic(styles) ? 'normal' : 'italic' });
     };
 
     const toggleUnderline = () => {
-        const newValue = isUnderline ? 'none' : 'underline';
-        onUpdateStyles(nodeId, { ...styles, textDecoration: newValue });
+        setStyle({ textDecoration: isUnderline(styles) ? 'none' : 'underline' });
     };
 
-    const toggleStrikethrough = () => {
-        const newValue = isStrikethrough ? 'none' : 'line-through';
-        onUpdateStyles(nodeId, { ...styles, textDecoration: newValue });
+    const setAlign = (align: 'left' | 'center' | 'right') => {
+        setStyle({ textAlign: align });
     };
 
-    const clearFormatting = () => {
-        const cleared = { ...styles };
-        delete cleared.fontWeight;
-        delete cleared.fontStyle;
-        delete cleared.textDecoration;
-        delete cleared.color;
-        delete cleared.backgroundColor;
-
-        // We need to explicitly set them to undefined or default values to override existing
-        onUpdateStyles(nodeId, {
-            ...cleared,
-            fontWeight: 'normal',
-            fontStyle: 'normal',
-            textDecoration: 'none',
-            color: undefined,
-            backgroundColor: undefined,
-        });
-    };
-
-    const handleFontSizeSlider = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const value = parseInt(event.target.value, 10);
-        // Store raw numeric value for direct inline style pass-through
-        setStyle({ fontSize: value });
-    };
-
-    const handleFontSizeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const value = parseInt(event.target.value, 10);
-        if (Number.isFinite(value) && value > 0) {
-            // Store raw numeric value for direct inline style pass-through
-            setStyle({ fontSize: value });
-        }
+    const handleFontSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = parseInt(e.target.value, 10);
+        if (!isNaN(val)) setStyle({ fontSize: val });
     };
 
     return (
         <div
-            className="editor-popup"
+            className="text-hover-toolbar"
             style={{
-                top: position.top,
+                position: 'fixed',
+                top: position.top - 60,
                 left: position.left,
+                zIndex: 9999,
+                backgroundColor: 'white',
+                padding: '8px',
+                borderRadius: '8px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                display: 'flex',
+                gap: '8px',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                maxWidth: '320px'
             }}
-            onMouseDown={(e) => e.stopPropagation()}
         >
-            <div className="editor-popup-header">
-                <div className="editor-popup-header-actions">
-                    <button
-                        type="button"
-                        className="editor-popup-close"
-                        onClick={onClose}
-                        title="إغلاق"
-                    >
-                        ✕
-                    </button>
-                    <button
-                        type="button"
-                        className="editor-popup-help"
-                        title="مساعدة"
-                    >
-                        ?
-                    </button>
-                </div>
-                <span className="editor-popup-title">اعداد النص</span>
+            {/* Bold Button */}
+            <button
+                className={`toolbar-btn ${isBold(styles) ? 'active' : ''}`}
+                onClick={toggleBold}
+                style={{ fontWeight: 'bold', background: isBold(styles) ? '#e5e7eb' : 'transparent' }}
+            >
+                B
+            </button>
+
+            {/* Italic Button */}
+            <button
+                className={`toolbar-btn ${isItalic(styles) ? 'active' : ''}`}
+                onClick={toggleItalic}
+                style={{ fontStyle: 'italic', background: isItalic(styles) ? '#e5e7eb' : 'transparent' }}
+            >
+                I
+            </button>
+
+            {/* Underline Button */}
+            <button
+                className={`toolbar-btn ${isUnderline(styles) ? 'active' : ''}`}
+                onClick={toggleUnderline}
+                style={{ textDecoration: 'underline', background: isUnderline(styles) ? '#e5e7eb' : 'transparent' }}
+            >
+                U
+            </button>
+
+            <div className="toolbar-divider" style={{ width: 1, height: 20, background: '#e5e7eb' }} />
+
+            {/* Alignment */}
+            <button onClick={() => setAlign('left')} style={{ background: currentAlign === 'left' ? '#e5e7eb' : 'transparent' }}>L</button>
+            <button onClick={() => setAlign('center')} style={{ background: currentAlign === 'center' ? '#e5e7eb' : 'transparent' }}>C</button>
+            <button onClick={() => setAlign('right')} style={{ background: currentAlign === 'right' ? '#e5e7eb' : 'transparent' }}>R</button>
+
+            <div className="toolbar-divider" style={{ width: 1, height: 20, background: '#e5e7eb' }} />
+
+            {/* Font Size Input (No resets!) */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                <span style={{ fontSize: 10, color: '#666' }}>Size:</span>
+                <input
+                    type="number"
+                    value={currentFontSize}
+                    onChange={handleFontSizeChange}
+                    style={{ width: 40, padding: 4, borderRadius: 4, border: '1px solid #ddd' }}
+                />
             </div>
-            <div className="editor-popup-body">
-                {/* Font Family */}
-                <div className="popup-field">
-                    <label className="popup-field-label">الخط</label>
-                    <select
-                        className="popup-select"
-                        value={currentFontFamily}
-                        onChange={(e) => setStyle({ fontFamily: e.target.value })}
-                    >
-                        {FONT_FAMILY_OPTIONS.map((opt) => (
-                            <option key={opt.value} value={opt.value}>
-                                {opt.label}
-                            </option>
-                        ))}
-                    </select>
-                </div>
 
-                {/* Font Size */}
-                <div className="popup-field">
-                    <label className="popup-field-label">مقاس الخط</label>
-                    <div className="font-size-control">
-                        <input
-                            type="number"
-                            className="font-size-input"
-                            value={fontSizeNum}
-                            onChange={handleFontSizeInput}
-                            min={10}
-                            max={72}
-                        />
-                        <input
-                            type="range"
-                            className="font-size-slider"
-                            min={10}
-                            max={72}
-                            value={fontSizeNum}
-                            onChange={handleFontSizeSlider}
-                        />
-                    </div>
-                </div>
-
-                {/* Text Formatting */}
-                <div className="text-format-group">
-                    <button
-                        type="button"
-                        className={`text-format-btn ${isBold ? 'active' : ''}`}
-                        onClick={toggleBold}
-                        title="عريض"
-                    >
-                        B
-                    </button>
-                    <button
-                        type="button"
-                        className={`text-format-btn ${isUnderline ? 'active' : ''}`}
-                        onClick={toggleUnderline}
-                        title="تسطير"
-                        style={{ textDecoration: 'underline' }}
-                    >
-                        U
-                    </button>
-                    <button
-                        type="button"
-                        className={`text-format-btn ${isItalic ? 'active' : ''}`}
-                        onClick={toggleItalic}
-                        title="مائل"
-                        style={{ fontStyle: 'italic' }}
-                    >
-                        I
-                    </button>
-                    <button
-                        type="button"
-                        className={`text-format-btn ${isStrikethrough ? 'active' : ''}`}
-                        onClick={toggleStrikethrough}
-                        title="يتوسطه خط"
-                        style={{ textDecoration: 'line-through' }}
-                    >
-                        S
-                    </button>
-                    <span className="format-divider" />
-                    {/* Text Color */}
-                    <button
-                        type="button"
-                        className="text-format-btn color-picker-btn"
-                        title="لون النص"
-                    >
-                        <span style={{ color: currentColor }}>A</span>
-                        <span
-                            className="color-indicator"
-                            style={{ backgroundColor: currentColor }}
-                        />
-                        <input
-                            type="color"
-                            value={currentColor === 'inherit' ? '#000000' : currentColor}
-                            onChange={(e) => setStyle({ color: e.target.value })}
-                        />
-                    </button>
-                    {/* Background Color */}
-                    <button
-                        type="button"
-                        className="text-format-btn color-picker-btn"
-                        title="لون الخلفية"
-                    >
-                        <span
-                            className="color-indicator"
-                            style={{ backgroundColor: currentBgColor === 'transparent' ? '#ffffff' : currentBgColor }}
-                        />
-                        <input
-                            type="color"
-                            value={currentBgColor === 'transparent' ? '#ffffff' : currentBgColor}
-                            onChange={(e) => setStyle({ backgroundColor: e.target.value })}
-                        />
-                    </button>
-                    <span className="format-divider" />
-                    <button
-                        type="button"
-                        className="text-format-btn"
-                        onClick={clearFormatting}
-                        title="مسح التنسيق"
-                    >
-                        ✕
-                    </button>
-                </div>
-
-                {/* Text Alignment */}
-                <div className="text-align-group">
-                    <button
-                        type="button"
-                        className={`text-format-btn ${currentTextAlign === 'end' || currentTextAlign === 'right' ? 'active' : ''}`}
-                        onClick={() => setStyle({ textAlign: 'end' })}
-                        title="محاذاة لليمين"
-                    >
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M3 21v-2h18v2H3Zm6-4v-2h12v2H9Zm-6-4v-2h18v2H3Zm6-4V7h12v2H9ZM3 5V3h18v2H3Z" />
-                        </svg>
-                    </button>
-                    <button
-                        type="button"
-                        className={`text-format-btn ${currentTextAlign === 'center' ? 'active' : ''}`}
-                        onClick={() => setStyle({ textAlign: 'center' })}
-                        title="وسط"
-                    >
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M3 21v-2h18v2H3Zm4-4v-2h10v2H7ZM3 13v-2h18v2H3Zm4-4V7h10v2H7ZM3 5V3h18v2H3Z" />
-                        </svg>
-                    </button>
-                    <button
-                        type="button"
-                        className={`text-format-btn ${currentTextAlign === 'start' || currentTextAlign === 'left' ? 'active' : ''}`}
-                        onClick={() => setStyle({ textAlign: 'start' })}
-                        title="محاذاة لليسار"
-                    >
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M3 21v-2h18v2H3Zm0-4v-2h12v2H3Zm0-4v-2h18v2H3Zm0-4V7h12v2H3ZM3 5V3h18v2H3Z" />
-                        </svg>
-                    </button>
-                    <button
-                        type="button"
-                        className={`text-format-btn ${currentTextAlign === 'justify' ? 'active' : ''}`}
-                        onClick={() => setStyle({ textAlign: 'justify' })}
-                        title="ضبط"
-                    >
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M3 21v-2h18v2H3Zm0-4v-2h18v2H3Zm0-4v-2h18v2H3Zm0-4V7h18v2H3ZM3 5V3h18v2H3Z" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
+            {/* Color Picker */}
+            <input
+                type="color"
+                value={currentColor}
+                onChange={(e) => setStyle({ color: e.target.value })}
+                style={{ width: 24, height: 24, padding: 0, border: 'none', background: 'none', cursor: 'pointer' }}
+            />
         </div>
     );
 }
-
-// Keep old export name for backward compatibility
-export { TextEditorPopup as TextHoverToolbar };
-export type { TextEditorPopupProps as TextHoverToolbarProps };

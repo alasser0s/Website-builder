@@ -771,8 +771,8 @@ export function EditorShell() {
                 nodeType={selectedNode.type as 'heading' | 'paragraph' | 'button'}
                 // Merge data (base) with styles (overrides) so toolbar sees all values
                 styles={{
-                  ...(selectedNode.data as Record<string, unknown> ?? {}),
-                  ...(selectedNode.styles as Record<string, unknown> ?? {}),
+                  ...selectedNode.data,
+                  ...(selectedNode.styles || {})
                 }}
                 onUpdateStyles={(id, patch) => updateStyles(id, patch)}
                 position={popupPosition}
