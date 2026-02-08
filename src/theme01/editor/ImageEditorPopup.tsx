@@ -44,6 +44,7 @@ export function ImageEditorPopup({
     return (
         <div
             className="editor-popup"
+            data-editor-interactive="true"
             style={{
                 top: position.top,
                 left: position.left,
