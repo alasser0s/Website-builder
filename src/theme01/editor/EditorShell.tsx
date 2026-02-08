@@ -35,7 +35,8 @@ const TEXT_NODE_TYPES = new Set(['heading', 'paragraph', 'button']);
 // All node types that can be deleted (excludes page, header, footer which are structural)
 const DELETABLE_TYPES = new Set([
   'section', 'row', 'container', 'column',
-  'card',
+  'heading', 'paragraph', 'button', 'image', 'list',
+  'badge', 'divider', 'card', 'component',
   'features', 'gallery', 'slider', 'testimonials',
   'input', 'textarea', 'select',
   'map', 'opening_hours', 'menu_grid', 'cart',
