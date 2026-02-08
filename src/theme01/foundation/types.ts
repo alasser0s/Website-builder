@@ -246,10 +246,10 @@ export interface FeaturesNodeData {
   items?: FeatureItem[];
 }
 
-export interface FeaturesNode extends Omit<BaseBlueprintNode, 'type' | 'children'> {
+// FeaturesNode now supports children for flexible composition
+export interface FeaturesNode extends Omit<BaseBlueprintNode, 'type'> {
   type: 'features';
   data?: BlueprintNodeData & FeaturesNodeData;
-  children: [];
 }
 
 export type MediaItem = {
@@ -269,10 +269,10 @@ export interface GalleryNodeData {
   items?: MediaItem[];
 }
 
-export interface GalleryNode extends Omit<BaseBlueprintNode, 'type' | 'children'> {
+// GalleryNode now supports children for flexible composition
+export interface GalleryNode extends Omit<BaseBlueprintNode, 'type'> {
   type: 'gallery';
   data?: BlueprintNodeData & GalleryNodeData;
-  children: [];
 }
 
 export interface SliderNodeData {
@@ -287,10 +287,10 @@ export interface SliderNodeData {
   items?: MediaItem[];
 }
 
-export interface SliderNode extends Omit<BaseBlueprintNode, 'type' | 'children'> {
+// SliderNode now supports children for flexible composition
+export interface SliderNode extends Omit<BaseBlueprintNode, 'type'> {
   type: 'slider';
   data?: BlueprintNodeData & SliderNodeData;
-  children: [];
 }
 
 export type TestimonialAvatar = {
@@ -321,10 +321,10 @@ export interface TestimonialsNodeData {
   items?: TestimonialItem[];
 }
 
-export interface TestimonialsNode extends Omit<BaseBlueprintNode, 'type' | 'children'> {
+// TestimonialsNode now supports children for flexible composition
+export interface TestimonialsNode extends Omit<BaseBlueprintNode, 'type'> {
   type: 'testimonials';
   data?: BlueprintNodeData & TestimonialsNodeData;
-  children: [];
 }
 
 export interface InputNodeData {

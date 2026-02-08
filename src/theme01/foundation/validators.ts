@@ -50,6 +50,7 @@ export function validateNode(node: BlueprintNode, isRoot = false, collector?: Va
     errors.push('Node children must be an array');
   }
   // General leaf guard: treat specific leaf types as non-children hosts
+  // Note: 'features', 'gallery', 'slider', 'testimonials' removed to enable container flexibility
   const leafTypes: NodeType[] = [
     'component',
     'heading',
@@ -60,10 +61,10 @@ export function validateNode(node: BlueprintNode, isRoot = false, collector?: Va
     'badge',
     'divider',
     'card',
-    'features',
-    'gallery',
-    'slider',
-    'testimonials',
+    // 'features',    // Now supports children
+    // 'gallery',     // Now supports children
+    // 'slider',      // Now supports children
+    // 'testimonials', // Now supports children
     'input',
     'textarea',
     'select',

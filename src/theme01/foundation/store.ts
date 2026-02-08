@@ -5,6 +5,7 @@ import { selectPath, isAncestor } from './selectors';
 import { createInitialSkeleton } from './skeleton';
 import { generateNodeId } from './id';
 
+// Note: features, gallery, slider, testimonials removed to allow children
 const LEAF_NODE_TYPES: NodeType[] = [
   'component',
   'heading',
@@ -14,10 +15,10 @@ const LEAF_NODE_TYPES: NodeType[] = [
   'button',
   'badge',
   'divider',
-  'features',
-  'gallery',
-  'slider',
-  'testimonials',
+  // 'features',    // Now supports children
+  // 'gallery',     // Now supports children  
+  // 'slider',      // Now supports children
+  // 'testimonials', // Now supports children
   'map',
   'opening_hours',
   'menu_grid',

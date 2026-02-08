@@ -6,6 +6,7 @@ interface ImageEditorPopupProps {
     objectFit: string;
     position: { top: number; left: number };
     onClose: () => void;
+    onUpdateStyles: (nodeId: string, styles: Record<string, unknown>) => void;
     onUpdateData: (nodeId: string, data: Record<string, unknown>) => void;
     onUpload: (file: File) => void;
 }
@@ -23,6 +24,7 @@ export function ImageEditorPopup({
     objectFit,
     position,
     onClose,
+    onUpdateStyles,
     onUpdateData,
     onUpload,
 }: ImageEditorPopupProps) {
@@ -36,7 +38,8 @@ export function ImageEditorPopup({
     };
 
     const handleObjectFitChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        onUpdateData(nodeId, { objectFit: event.target.value });
+        // Use onUpdateStyles so objectFit applies as inline style
+        onUpdateStyles(nodeId, { objectFit: event.target.value });
     };
 
     return (

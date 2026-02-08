@@ -760,7 +760,11 @@ export function EditorShell() {
               <TextHoverToolbar
                 nodeId={selectedNode.id}
                 nodeType={selectedNode.type as 'heading' | 'paragraph' | 'button'}
-                styles={(selectedNode.styles ?? {}) as Record<string, unknown>}
+                // Merge data (base) with styles (overrides) so toolbar sees all values
+                styles={{
+                  ...(selectedNode.data as Record<string, unknown> ?? {}),
+                  ...(selectedNode.styles as Record<string, unknown> ?? {}),
+                }}
                 onUpdateStyles={(id, patch) => updateStyles(id, patch)}
                 position={popupPosition}
                 onClose={() => setShowTextPopup(false)}
@@ -771,9 +775,15 @@ export function EditorShell() {
               <ImageEditorPopup
                 nodeId={selectedNode.id}
                 currentSrc={((selectedNode.data as Record<string, unknown>)?.src as string) ?? ''}
-                objectFit={((selectedNode.data as Record<string, unknown>)?.objectFit as string) ?? 'cover'}
+                // Priority: styles.objectFit → data.objectFit → 'cover'
+                objectFit={
+                  ((selectedNode.styles as Record<string, unknown>)?.objectFit as string) ??
+                  ((selectedNode.data as Record<string, unknown>)?.objectFit as string) ??
+                  'cover'
+                }
                 position={popupPosition}
                 onClose={() => setShowImagePopup(false)}
+                onUpdateStyles={(id, styles) => updateStyles(id, styles)}
                 onUpdateData={(id, data) => updateData(id, data)}
                 onUpload={async (file) => {
                   try {

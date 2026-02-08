@@ -370,9 +370,68 @@ function mapNodeStyles(record: Record<string, unknown> | undefined): string {
 }
 
 // Extract inline styles for properties that aren't mapped via utility classes
+// Also pass through typography/layout properties for direct popup control
 function mapInlineStyles(record: Record<string, unknown> | undefined): React.CSSProperties | undefined {
   if (!record) return undefined;
   const style: React.CSSProperties = {};
+
+  // Typography pass-through (inline styles override utility classes)
+  // Handle fontSize - accept numbers or numeric strings for direct pixel values
+  const fontSize = record.fontSize;
+  if (typeof fontSize === 'number' && Number.isFinite(fontSize) && fontSize > 0) {
+    style.fontSize = `${fontSize}px`;
+  } else if (typeof fontSize === 'string' && /^\d+$/.test(fontSize.trim())) {
+    style.fontSize = `${fontSize.trim()}px`;
+  }
+
+  // Handle fontWeight
+  const fontWeight = record.fontWeight;
+  if (typeof fontWeight === 'string' && fontWeight !== 'normal' && fontWeight.trim() !== '') {
+    style.fontWeight = fontWeight as React.CSSProperties['fontWeight'];
+  }
+
+  // Handle fontStyle
+  if (record.fontStyle === 'italic') {
+    style.fontStyle = 'italic';
+  }
+
+  // Handle textDecoration
+  const textDecoration = record.textDecoration;
+  if (typeof textDecoration === 'string' && textDecoration !== 'none' && textDecoration.trim() !== '') {
+    style.textDecoration = textDecoration as React.CSSProperties['textDecoration'];
+  }
+
+  // Handle textAlign
+  const textAlign = record.textAlign;
+  if (typeof textAlign === 'string' && textAlign.trim() !== '') {
+    style.textAlign = textAlign as React.CSSProperties['textAlign'];
+  }
+
+  // Handle color (only hex colors for direct pass-through)
+  const color = record.color;
+  if (typeof color === 'string' && color.startsWith('#')) {
+    style.color = color;
+  }
+
+  // Handle backgroundColor (only hex colors for direct pass-through)
+  const backgroundColor = record.backgroundColor;
+  if (typeof backgroundColor === 'string' && backgroundColor.startsWith('#')) {
+    style.backgroundColor = backgroundColor;
+  }
+
+  // Handle fontFamily (for non-token fonts)
+  const fontFamily = record.fontFamily;
+  if (typeof fontFamily === 'string' && fontFamily !== 'inherit' && fontFamily.trim() !== '') {
+    style.fontFamily = fontFamily;
+  }
+
+  // Handle objectFit (for images)
+  const objectFit = record.objectFit;
+  if (typeof objectFit === 'string' && objectFit.trim() !== '') {
+    style.objectFit = objectFit as React.CSSProperties['objectFit'];
+  }
+
+  // Background image handling
   const bgImage = (record as any)['bgImage'];
   if (typeof bgImage === 'string' && bgImage.trim() !== '') {
     style.backgroundImage = /^url\(/.test(bgImage) ? (bgImage as any) : `url("${bgImage}")`;

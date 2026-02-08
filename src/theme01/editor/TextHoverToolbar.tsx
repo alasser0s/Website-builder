@@ -33,27 +33,13 @@ const FONT_SIZE_MAP: Record<string, number> = {
     '6xl': 60,
 };
 
-const FONT_SIZE_OPTIONS = Object.entries(FONT_SIZE_MAP);
+// FONT_SIZE_OPTIONS removed - no longer used since we store raw numeric values
 
 function getFontSizeValue(size: string): number {
     return FONT_SIZE_MAP[size] ?? (parseInt(size, 10) || 16);
 }
 
-function getSizeToken(value: number): string {
-    const entry = FONT_SIZE_OPTIONS.find(([, v]) => v === value);
-    if (entry) return entry[0];
-    // Find closest
-    let closest = 'base';
-    let closestDiff = Infinity;
-    for (const [token, v] of FONT_SIZE_OPTIONS) {
-        const diff = Math.abs(v - value);
-        if (diff < closestDiff) {
-            closestDiff = diff;
-            closest = token;
-        }
-    }
-    return closest;
-}
+// Note: getSizeToken was removed as we now store raw numeric fontSize values
 
 export function TextEditorPopup({
     nodeId,
@@ -63,7 +49,7 @@ export function TextEditorPopup({
     onClose,
 }: TextEditorPopupProps) {
     const currentFontFamily = (styles.fontFamily as string) ?? 'inherit';
-    const currentFontSize = (styles.fontSize as string) ?? 'base';
+    const currentFontSize = styles.fontSize ?? 'base';
     const currentFontWeight = (styles.fontWeight as string) ?? 'normal';
     const currentTextDecoration = (styles.textDecoration as string) ?? 'none';
     const currentFontStyle = (styles.fontStyle as string) ?? 'normal';
@@ -71,7 +57,10 @@ export function TextEditorPopup({
     const currentColor = (styles.color as string) ?? '#000000';
     const currentBgColor = (styles.backgroundColor as string) ?? 'transparent';
 
-    const fontSizeNum = getFontSizeValue(currentFontSize);
+    // Handle both numeric and string fontSize values
+    const fontSizeNum = typeof currentFontSize === 'number'
+        ? currentFontSize
+        : getFontSizeValue(String(currentFontSize));
 
     const setStyle = (patch: Record<string, unknown>) => {
         onUpdateStyles(nodeId, patch);
@@ -118,13 +107,15 @@ export function TextEditorPopup({
 
     const handleFontSizeSlider = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(event.target.value, 10);
-        setStyle({ fontSize: getSizeToken(value) });
+        // Store raw numeric value for direct inline style pass-through
+        setStyle({ fontSize: value });
     };
 
     const handleFontSizeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(event.target.value, 10);
         if (Number.isFinite(value) && value > 0) {
-            setStyle({ fontSize: getSizeToken(value) });
+            // Store raw numeric value for direct inline style pass-through
+            setStyle({ fontSize: value });
         }
     };
 
