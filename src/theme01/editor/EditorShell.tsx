@@ -32,6 +32,15 @@ type DropTarget = {
 const DRAGGABLE_TYPES = new Set(['section', 'row', 'container']);
 const ALLOWED_PARENT_TYPES = new Set(['page', 'section', 'container']);
 const TEXT_NODE_TYPES = new Set(['heading', 'paragraph', 'button']);
+// All node types that can be deleted (excludes page, header, footer which are structural)
+const DELETABLE_TYPES = new Set([
+  'section', 'row', 'container', 'column',
+  'heading', 'paragraph', 'button', 'image', 'list',
+  'badge', 'divider', 'card',
+  'features', 'gallery', 'slider', 'testimonials',
+  'input', 'textarea', 'select',
+  'map', 'opening_hours', 'menu_grid', 'cart',
+]);
 
 // Arabic labels for element types
 const ELEMENT_TYPE_LABELS: Record<string, string> = {
@@ -696,8 +705,8 @@ export function EditorShell() {
                 >
                   {ELEMENT_TYPE_LABELS[selectedNode.type] || selectedNode.type}
                 </div>
-                {/* Delete Button - Only for draggable types */}
-                {DRAGGABLE_TYPES.has(selectedNode.type) && (
+                {/* Delete Button - Show for all deletable types */}
+                {DELETABLE_TYPES.has(selectedNode.type) && (
                   <button
                     type="button"
                     className="component-delete-btn"
