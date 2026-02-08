@@ -426,6 +426,22 @@ function mapInlineStyles(record: Record<string, unknown> | undefined): React.CSS
     style.fontFamily = fontFamily;
   }
 
+  // Handle layout & spacing pass-through
+  const layoutProps = [
+    'width', 'minWidth', 'maxWidth',
+    'height', 'minHeight', 'maxHeight',
+    'borderRadius', 'opacity', 'lineHeight'
+  ];
+
+  layoutProps.forEach((prop) => {
+    const val = record[prop];
+    if (typeof val === 'string' && val.trim() !== '') {
+      (style as any)[prop] = val;
+    } else if (typeof val === 'number' && Number.isFinite(val)) {
+      (style as any)[prop] = val;
+    }
+  });
+
   // Handle objectFit (for images)
   const objectFit = record.objectFit;
   if (typeof objectFit === 'string' && objectFit.trim() !== '') {
@@ -446,6 +462,7 @@ function mapInlineStyles(record: Record<string, unknown> | undefined): React.CSS
     if (!style.backgroundSize) style.backgroundSize = 'cover';
     if (!style.backgroundPosition) style.backgroundPosition = 'center';
   }
+
   return Object.keys(style).length ? style : undefined;
 }
 
@@ -2007,7 +2024,11 @@ const renderImage: RegistryView = ({ node }) => {
   const data = (image.data ?? {}) as ImageNodeData;
   const src = typeof data?.src === 'string' ? data.src.trim() : '';
   const alt = typeof data?.alt === 'string' ? data.alt : '';
-  const objectFit = data?.objectFit ? IMAGE_OBJECT_FIT[data.objectFit] : 'cover';
+  // Priority: styles.objectFit -> data.objectFit -> 'cover'
+  const styleObjectFit = (node.styles as any)?.objectFit;
+  const dataObjectFit = data?.objectFit ? IMAGE_OBJECT_FIT[data.objectFit] : 'cover';
+  const finalObjectFit = styleObjectFit || dataObjectFit;
+
   const aspect = data?.aspect && IMAGE_ASPECT_PADDING[data.aspect] ? data.aspect : undefined;
 
   const [status, setStatus] = useState<'loading' | 'loaded' | 'error'>(() => (src ? 'loading' : 'error'));
@@ -2020,16 +2041,21 @@ const renderImage: RegistryView = ({ node }) => {
 
   const classes = classNames('image-component', mapNodeStyles(node.styles));
   const inline = mapInlineStyles(node.styles) ?? {};
+
+  // Extract wrapper-specific styles (dimensions, position) vs img-specific (objectFit)
+  // We apply dimensions to wrapper to ensure aspect ratio works
   const wrapperStyle: React.CSSProperties = aspect
     ? { ...inline, position: inline.position ?? 'relative', width: inline.width ?? '100%', paddingBottom: IMAGE_ASPECT_PADDING[aspect] }
     : inline;
+
   const frameStyle: React.CSSProperties = aspect
     ? { position: 'absolute', inset: 0, width: '100%', height: '100%' }
     : { position: 'relative', width: '100%', height: inline.height ?? 'auto' };
+
   const imgStyle: React.CSSProperties = {
     width: '100%',
     height: aspect ? '100%' : 'auto',
-    objectFit,
+    objectFit: finalObjectFit as any,
     borderRadius: 'inherit',
     display: 'block',
     opacity: status === 'loaded' ? 1 : 0,
