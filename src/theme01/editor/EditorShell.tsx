@@ -701,6 +701,7 @@ export function EditorShell() {
                     position: 'absolute',
                     top: selectionRect.top - 28,
                     left: selectionRect.left,
+                    zIndex: 50,
                   }}
                 >
                   {ELEMENT_TYPE_LABELS[selectedNode.type] || selectedNode.type}
@@ -714,6 +715,8 @@ export function EditorShell() {
                       position: 'absolute',
                       top: selectionRect.top - 28,
                       left: selectionRect.left + selectionRect.width - 60,
+                      zIndex: 50,
+                      cursor: 'pointer',
                     }}
                     onClick={() => {
                       const parentInfo = getParentInfo(state.present.root, selectedNode.id);
@@ -736,6 +739,7 @@ export function EditorShell() {
                     position: 'absolute',
                     top: selectionRect.top - 6,
                     left: selectionRect.left - 6,
+                    zIndex: 49,
                   }}
                 />
                 <div
@@ -744,6 +748,7 @@ export function EditorShell() {
                     position: 'absolute',
                     top: selectionRect.top - 6,
                     left: selectionRect.left + selectionRect.width - 6,
+                    zIndex: 49,
                   }}
                 />
                 <div
@@ -752,6 +757,7 @@ export function EditorShell() {
                     position: 'absolute',
                     top: selectionRect.top + selectionRect.height - 6,
                     left: selectionRect.left - 6,
+                    zIndex: 49,
                   }}
                 />
                 <div
@@ -760,6 +766,7 @@ export function EditorShell() {
                     position: 'absolute',
                     top: selectionRect.top + selectionRect.height - 6,
                     left: selectionRect.left + selectionRect.width - 6,
+                    zIndex: 49,
                   }}
                 />
               </>
