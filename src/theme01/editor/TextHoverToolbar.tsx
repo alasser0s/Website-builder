@@ -50,9 +50,7 @@ export function TextEditorPopup({
 }: TextEditorPopupProps) {
     const currentFontFamily = (styles.fontFamily as string) ?? 'inherit';
     const currentFontSize = styles.fontSize ?? 'base';
-    const currentFontWeight = (styles.fontWeight as string) ?? 'normal';
-    const currentTextDecoration = (styles.textDecoration as string) ?? 'none';
-    const currentFontStyle = (styles.fontStyle as string) ?? 'normal';
+    // unused vars removed: currentFontWeight, currentTextDecoration, currentFontStyle
     const currentTextAlign = (styles.textAlign as string) ?? 'start';
     const currentColor = (styles.color as string) ?? '#000000';
     const currentBgColor = (styles.backgroundColor as string) ?? 'transparent';
@@ -66,37 +64,48 @@ export function TextEditorPopup({
         onUpdateStyles(nodeId, patch);
     };
 
-    const isBold = ['bold', 'semibold', 'extrabold', 'black'].includes(currentFontWeight);
-    const isUnderline = currentTextDecoration === 'underline';
-    const isItalic = currentFontStyle === 'italic';
-    const isStrikethrough = currentTextDecoration === 'line-through';
+    // Helper functions for style checks
+    const checkBold = (s: any) => s.fontWeight === 'bold' || s.fontWeight === 700 || s.fontWeight === '700';
+    const checkItalic = (s: any) => s.fontStyle === 'italic';
+    const checkUnderline = (s: any) => s.textDecoration === 'underline';
+    const checkStrikethrough = (s: any) => s.textDecoration === 'line-through';
+
+    const isBold = checkBold(styles);
+    const isItalic = checkItalic(styles);
+    const isUnderline = checkUnderline(styles);
+    const isStrikethrough = checkStrikethrough(styles);
 
     const toggleBold = () => {
-        setStyle({ fontWeight: isBold ? 'normal' : 'bold' });
-    };
-
-    const toggleUnderline = () => {
-        if (currentTextDecoration === 'underline') {
-            setStyle({ textDecoration: 'none' });
-        } else {
-            setStyle({ textDecoration: 'underline' });
-        }
+        const newValue = isBold ? 'normal' : 'bold';
+        onUpdateStyles(nodeId, { ...styles, fontWeight: newValue });
     };
 
     const toggleItalic = () => {
-        setStyle({ fontStyle: isItalic ? 'normal' : 'italic' });
+        const newValue = isItalic ? 'normal' : 'italic';
+        onUpdateStyles(nodeId, { ...styles, fontStyle: newValue });
+    };
+
+    const toggleUnderline = () => {
+        const newValue = isUnderline ? 'none' : 'underline';
+        onUpdateStyles(nodeId, { ...styles, textDecoration: newValue });
     };
 
     const toggleStrikethrough = () => {
-        if (currentTextDecoration === 'line-through') {
-            setStyle({ textDecoration: 'none' });
-        } else {
-            setStyle({ textDecoration: 'line-through' });
-        }
+        const newValue = isStrikethrough ? 'none' : 'line-through';
+        onUpdateStyles(nodeId, { ...styles, textDecoration: newValue });
     };
 
     const clearFormatting = () => {
-        setStyle({
+        const cleared = { ...styles };
+        delete cleared.fontWeight;
+        delete cleared.fontStyle;
+        delete cleared.textDecoration;
+        delete cleared.color;
+        delete cleared.backgroundColor;
+
+        // We need to explicitly set them to undefined or default values to override existing
+        onUpdateStyles(nodeId, {
+            ...cleared,
             fontWeight: 'normal',
             fontStyle: 'normal',
             textDecoration: 'none',
