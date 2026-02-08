@@ -11,18 +11,22 @@ interface StylesPanelProps {
   updateStyles: (nodeId: string, styles: Record<string, unknown>) => void;
 }
 
-const spacingSteps = ['0','1','2','3','4','6','8','10','12','16'];
-const fontWeights = ['thin','extralight','light','normal','medium','semibold','bold','extrabold','black'];
-const displays = ['block','inline','inline-block','flex','inline-flex','grid','inline-grid','contents','hidden'];
-const shadows = ['none','sm','md','lg','xl'];
-const radii = ['none','sm','md','lg','xl','full'];
-const fontSizes = ['xs','sm','base','lg','xl','2xl','3xl'];
-const lineHeights = ['none','tight','snug','normal','relaxed','loose'];
-const textAligns = ['left','center','right','justify'];
-const widths = ['auto','full','screen','max-w-xs','max-w-sm','max-w-md','max-w-lg','max-w-xl','max-w-2xl','max-w-3xl','max-w-4xl'];
-const aligns = ['start','end','center','baseline','stretch'];
-const justifies = ['start','end','center','between','around','evenly'];
-const borderStyles = ['none','solid','dashed','dotted','double'];
+const spacingSteps = ['0', '1', '2', '3', '4', '6', '8', '10', '12', '16'];
+const fontWeights = ['thin', 'extralight', 'light', 'normal', 'medium', 'semibold', 'bold', 'extrabold', 'black'];
+const fontFamilies = ['sans', 'serif', 'mono', 'inter', 'roboto', 'opensans', 'system'];
+const letterSpacings = ['tighter', 'tight', 'normal', 'wide', 'wider', 'widest'];
+const textDecorations = ['none', 'underline', 'line-through', 'overline'];
+const textTransforms = ['normal-case', 'uppercase', 'lowercase', 'capitalize'];
+const displays = ['block', 'inline', 'inline-block', 'flex', 'inline-flex', 'grid', 'inline-grid', 'contents', 'hidden'];
+const shadows = ['none', 'sm', 'md', 'lg', 'xl'];
+const radii = ['none', 'sm', 'md', 'lg', 'xl', 'full'];
+const fontSizes = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl'];
+const lineHeights = ['none', 'tight', 'snug', 'normal', 'relaxed', 'loose'];
+const textAligns = ['left', 'center', 'right', 'justify'];
+const widths = ['auto', 'full', 'screen', 'max-w-xs', 'max-w-sm', 'max-w-md', 'max-w-lg', 'max-w-xl', 'max-w-2xl', 'max-w-3xl', 'max-w-4xl'];
+const aligns = ['start', 'end', 'center', 'baseline', 'stretch'];
+const justifies = ['start', 'end', 'center', 'between', 'around', 'evenly'];
+const borderStyles = ['none', 'solid', 'dashed', 'dotted', 'double'];
 
 function FieldRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -41,7 +45,7 @@ export function StylesPanel({ nodeId, snapshot, updateStyles }: StylesPanelProps
   const colors = Object.keys(theme01Tokens.color);
 
   const setBase = (patch: Record<string, unknown>) => updateStyles(nodeId, patch);
-  const setResp = (bp: 'sm'|'md'|'lg', patch: Record<string, unknown>) => {
+  const setResp = (bp: 'sm' | 'md' | 'lg', patch: Record<string, unknown>) => {
     const next = { [bp]: { ...(styles?.[bp] ?? {}), ...patch } } as any;
     updateStyles(nodeId, next);
   };
@@ -56,7 +60,7 @@ export function StylesPanel({ nodeId, snapshot, updateStyles }: StylesPanelProps
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
         <strong>Styles</strong>
         <div style={{ display: 'flex', gap: 8 }}>
-          {(['Minimal','Contrast','Soft'] as const).map((p) => (
+          {(['Minimal', 'Contrast', 'Soft'] as const).map((p) => (
             <button key={p} onClick={() => applyPreset(p)}>{p}</button>
           ))}
         </div>
@@ -96,7 +100,7 @@ export function StylesPanel({ nodeId, snapshot, updateStyles }: StylesPanelProps
         </FieldRow>
         <FieldRow label="pt/pr/pb/pl">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 4 }}>
-            {(['pt','pr','pb','pl'] as const).map((k) => (
+            {(['pt', 'pr', 'pb', 'pl'] as const).map((k) => (
               <select key={k} value={String(styles?.[k] ?? '')} onChange={(e) => setBase({ [k]: e.target.value ? Number(e.target.value) : undefined } as any)}>
                 <option value="">(none)</option>
                 {spacingSteps.map((s) => (<option key={s} value={s}>{s}</option>))}
@@ -134,6 +138,30 @@ export function StylesPanel({ nodeId, snapshot, updateStyles }: StylesPanelProps
             {fontWeights.map((r) => (<option key={r} value={r}>{r}</option>))}
           </select>
         </FieldRow>
+        <FieldRow label="fontFamily">
+          <select value={styles.fontFamily ?? ''} onChange={(e) => setBase({ fontFamily: e.target.value || undefined })}>
+            <option value="">(none)</option>
+            {fontFamilies.map((r) => (<option key={r} value={r}>{r}</option>))}
+          </select>
+        </FieldRow>
+        <FieldRow label="letterSpacing">
+          <select value={styles.letterSpacing ?? ''} onChange={(e) => setBase({ letterSpacing: e.target.value || undefined })}>
+            <option value="">(none)</option>
+            {letterSpacings.map((r) => (<option key={r} value={r}>{r}</option>))}
+          </select>
+        </FieldRow>
+        <FieldRow label="textDecoration">
+          <select value={styles.textDecoration ?? ''} onChange={(e) => setBase({ textDecoration: e.target.value || undefined })}>
+            <option value="">(none)</option>
+            {textDecorations.map((r) => (<option key={r} value={r}>{r}</option>))}
+          </select>
+        </FieldRow>
+        <FieldRow label="textTransform">
+          <select value={styles.textTransform ?? ''} onChange={(e) => setBase({ textTransform: e.target.value || undefined })}>
+            <option value="">(none)</option>
+            {textTransforms.map((r) => (<option key={r} value={r}>{r}</option>))}
+          </select>
+        </FieldRow>
         <FieldRow label="display">
           <select value={styles.display ?? ''} onChange={(e) => setBase({ display: e.target.value || undefined })}>
             <option value="">(none)</option>
@@ -154,11 +182,11 @@ export function StylesPanel({ nodeId, snapshot, updateStyles }: StylesPanelProps
         </FieldRow>
         <FieldRow label="align/justify">
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-            <select disabled={!['flex','inline-flex','grid','inline-grid'].includes(styles.display)} value={styles.align ?? ''} onChange={(e) => setBase({ align: e.target.value || undefined })}>
+            <select disabled={!['flex', 'inline-flex', 'grid', 'inline-grid'].includes(styles.display)} value={styles.align ?? ''} onChange={(e) => setBase({ align: e.target.value || undefined })}>
               <option value="">(none)</option>
               {aligns.map((a) => (<option key={a} value={a}>{a}</option>))}
             </select>
-            <select disabled={!['flex','inline-flex','grid','inline-grid'].includes(styles.display)} value={styles.justify ?? ''} onChange={(e) => setBase({ justify: e.target.value || undefined })}>
+            <select disabled={!['flex', 'inline-flex', 'grid', 'inline-grid'].includes(styles.display)} value={styles.justify ?? ''} onChange={(e) => setBase({ justify: e.target.value || undefined })}>
               <option value="">(none)</option>
               {justifies.map((a) => (<option key={a} value={a}>{a}</option>))}
             </select>
@@ -168,7 +196,7 @@ export function StylesPanel({ nodeId, snapshot, updateStyles }: StylesPanelProps
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
             <select value={String(styles.borderWidth ?? '')} onChange={(e) => setBase({ borderWidth: e.target.value ? Number(e.target.value) : undefined })}>
               <option value="">(none)</option>
-              {['0','2','4','8'].map((v) => (<option key={v} value={v}>{v}</option>))}
+              {['0', '2', '4', '8'].map((v) => (<option key={v} value={v}>{v}</option>))}
             </select>
             <select value={styles.borderStyle ?? ''} onChange={(e) => setBase({ borderStyle: e.target.value || undefined })}>
               <option value="">(none)</option>
@@ -192,7 +220,41 @@ export function StylesPanel({ nodeId, snapshot, updateStyles }: StylesPanelProps
         </FieldRow>
       </fieldset>
 
-      {(['sm','md','lg'] as const).map((bp) => (
+      <fieldset style={{ marginBottom: 12 }}>
+        <legend style={{ fontWeight: 600, fontSize: 12 }}>Hover</legend>
+        <FieldRow label="text">
+          <select value={styles?.hover?.text ?? ''} onChange={(e) => setBase({ hover: { ...(styles?.hover ?? {}), text: e.target.value || undefined } })}>
+            <option value="">(none)</option>
+            {colors.map((c) => (<option key={c} value={c}>{c}</option>))}
+          </select>
+        </FieldRow>
+        <FieldRow label="bg">
+          <select value={styles?.hover?.bg ?? ''} onChange={(e) => setBase({ hover: { ...(styles?.hover ?? {}), bg: e.target.value || undefined } })}>
+            <option value="">(none)</option>
+            {colors.map((c) => (<option key={c} value={c}>{c}</option>))}
+          </select>
+        </FieldRow>
+        <FieldRow label="fontWeight">
+          <select value={styles?.hover?.fontWeight ?? ''} onChange={(e) => setBase({ hover: { ...(styles?.hover ?? {}), fontWeight: e.target.value || undefined } })}>
+            <option value="">(none)</option>
+            {fontWeights.map((r) => (<option key={r} value={r}>{r}</option>))}
+          </select>
+        </FieldRow>
+        <FieldRow label="textDecoration">
+          <select value={styles?.hover?.textDecoration ?? ''} onChange={(e) => setBase({ hover: { ...(styles?.hover ?? {}), textDecoration: e.target.value || undefined } })}>
+            <option value="">(none)</option>
+            {textDecorations.map((r) => (<option key={r} value={r}>{r}</option>))}
+          </select>
+        </FieldRow>
+        <FieldRow label="shadow">
+          <select value={styles?.hover?.shadow ?? ''} onChange={(e) => setBase({ hover: { ...(styles?.hover ?? {}), shadow: e.target.value || undefined } })}>
+            <option value="">(none)</option>
+            {shadows.map((r) => (<option key={r} value={r}>{r}</option>))}
+          </select>
+        </FieldRow>
+      </fieldset>
+
+      {(['sm', 'md', 'lg'] as const).map((bp) => (
         <fieldset key={bp} style={{ marginBottom: 12 }}>
           <legend style={{ fontWeight: 600, fontSize: 12 }}>{bp.toUpperCase()}</legend>
           <FieldRow label="p">
@@ -209,7 +271,7 @@ export function StylesPanel({ nodeId, snapshot, updateStyles }: StylesPanelProps
           </FieldRow>
           <FieldRow label="pt/pr/pb/pl">
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 4 }}>
-              {(['pt','pr','pb','pl'] as const).map((k) => (
+              {(['pt', 'pr', 'pb', 'pl'] as const).map((k) => (
                 <select key={k} value={String(styles?.[bp]?.[k] ?? '')} onChange={(e) => setResp(bp, { [k]: e.target.value ? Number(e.target.value) : undefined } as any)}>
                   <option value="">(none)</option>
                   {spacingSteps.map((s) => (<option key={s} value={s}>{s}</option>))}
@@ -235,6 +297,30 @@ export function StylesPanel({ nodeId, snapshot, updateStyles }: StylesPanelProps
               {lineHeights.map((r) => (<option key={r} value={r}>{r}</option>))}
             </select>
           </FieldRow>
+          <FieldRow label="fontFamily">
+            <select value={styles?.[bp]?.fontFamily ?? ''} onChange={(e) => setResp(bp, { fontFamily: e.target.value || undefined })}>
+              <option value="">(none)</option>
+              {fontFamilies.map((r) => (<option key={r} value={r}>{r}</option>))}
+            </select>
+          </FieldRow>
+          <FieldRow label="letterSpacing">
+            <select value={styles?.[bp]?.letterSpacing ?? ''} onChange={(e) => setResp(bp, { letterSpacing: e.target.value || undefined })}>
+              <option value="">(none)</option>
+              {letterSpacings.map((r) => (<option key={r} value={r}>{r}</option>))}
+            </select>
+          </FieldRow>
+          <FieldRow label="textDecoration">
+            <select value={styles?.[bp]?.textDecoration ?? ''} onChange={(e) => setResp(bp, { textDecoration: e.target.value || undefined })}>
+              <option value="">(none)</option>
+              {textDecorations.map((r) => (<option key={r} value={r}>{r}</option>))}
+            </select>
+          </FieldRow>
+          <FieldRow label="textTransform">
+            <select value={styles?.[bp]?.textTransform ?? ''} onChange={(e) => setResp(bp, { textTransform: e.target.value || undefined })}>
+              <option value="">(none)</option>
+              {textTransforms.map((r) => (<option key={r} value={r}>{r}</option>))}
+            </select>
+          </FieldRow>
           <FieldRow label="display">
             <select value={styles?.[bp]?.display ?? ''} onChange={(e) => setResp(bp, { display: e.target.value || undefined })}>
               <option value="">(none)</option>
@@ -249,11 +335,11 @@ export function StylesPanel({ nodeId, snapshot, updateStyles }: StylesPanelProps
           </FieldRow>
           <FieldRow label="align/justify">
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-              <select disabled={!['flex','inline-flex','grid','inline-grid'].includes(styles?.[bp]?.display)} value={styles?.[bp]?.align ?? ''} onChange={(e) => setResp(bp, { align: e.target.value || undefined })}>
+              <select disabled={!['flex', 'inline-flex', 'grid', 'inline-grid'].includes(styles?.[bp]?.display)} value={styles?.[bp]?.align ?? ''} onChange={(e) => setResp(bp, { align: e.target.value || undefined })}>
                 <option value="">(none)</option>
                 {aligns.map((a) => (<option key={a} value={a}>{a}</option>))}
               </select>
-              <select disabled={!['flex','inline-flex','grid','inline-grid'].includes(styles?.[bp]?.display)} value={styles?.[bp]?.justify ?? ''} onChange={(e) => setResp(bp, { justify: e.target.value || undefined })}>
+              <select disabled={!['flex', 'inline-flex', 'grid', 'inline-grid'].includes(styles?.[bp]?.display)} value={styles?.[bp]?.justify ?? ''} onChange={(e) => setResp(bp, { justify: e.target.value || undefined })}>
                 <option value="">(none)</option>
                 {justifies.map((a) => (<option key={a} value={a}>{a}</option>))}
               </select>
@@ -293,7 +379,7 @@ export function StylesPanel({ nodeId, snapshot, updateStyles }: StylesPanelProps
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
               <select value={String(styles?.[bp]?.borderWidth ?? '')} onChange={(e) => setResp(bp, { borderWidth: e.target.value ? Number(e.target.value) : undefined })}>
                 <option value="">(none)</option>
-                {['0','2','4','8'].map((v) => (<option key={v} value={v}>{v}</option>))}
+                {['0', '2', '4', '8'].map((v) => (<option key={v} value={v}>{v}</option>))}
               </select>
               <select value={styles?.[bp]?.borderStyle ?? ''} onChange={(e) => setResp(bp, { borderStyle: e.target.value || undefined })}>
                 <option value="">(none)</option>

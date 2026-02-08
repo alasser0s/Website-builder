@@ -58,7 +58,7 @@ function mapFontSize(value: unknown): string | '' {
 
 function mapFontWeight(value: unknown): string | '' {
   if (typeof value !== 'string' || !value) return '';
-  const allowed = new Set(['thin','extralight','light','normal','medium','semibold','bold','extrabold','black']);
+  const allowed = new Set(['thin', 'extralight', 'light', 'normal', 'medium', 'semibold', 'bold', 'extrabold', 'black']);
   const key = value.trim();
   if (key.startsWith('font-')) return key;
   return allowed.has(key) ? `font-${key}` : '';
@@ -67,13 +67,13 @@ function mapFontWeight(value: unknown): string | '' {
 function mapTextAlign(value: unknown): string | '' {
   if (typeof value !== 'string' || !value) return '';
   const key = value.trim();
-  const allowed = new Set(['left','center','right','justify']);
+  const allowed = new Set(['left', 'center', 'right', 'justify']);
   return allowed.has(key) ? `text-${key}` : '';
 }
 
 function mapDisplay(value: unknown): string | '' {
   if (typeof value !== 'string' || !value) return '';
-  const allowed = new Set(['block','inline','inline-block','flex','inline-flex','grid','inline-grid','contents','hidden']);
+  const allowed = new Set(['block', 'inline', 'inline-block', 'flex', 'inline-flex', 'grid', 'inline-grid', 'contents', 'hidden']);
   const key = value.trim();
   return allowed.has(key) ? key : '';
 }
@@ -83,7 +83,7 @@ function mapLineHeight(value: unknown): string | '' {
   const key = value.trim();
   // tailwind leading-*
   if (key.startsWith('leading-')) return key;
-  const allowed = new Set(['none','tight','snug','normal','relaxed','loose']);
+  const allowed = new Set(['none', 'tight', 'snug', 'normal', 'relaxed', 'loose']);
   return allowed.has(key) ? `leading-${key}` : '';
 }
 
@@ -91,8 +91,35 @@ function mapLetterSpacing(value: unknown): string | '' {
   if (typeof value !== 'string' || !value) return '';
   const key = value.trim();
   if (key.startsWith('tracking-')) return key;
-  const allowed = new Set(['tighter','tight','normal','wide','wider','widest']);
+  const allowed = new Set(['tighter', 'tight', 'normal', 'wide', 'wider', 'widest']);
   return allowed.has(key) ? `tracking-${key}` : '';
+}
+
+function mapFontFamily(value: unknown): string | '' {
+  if (typeof value !== 'string' || !value) return '';
+  const key = value.trim();
+  if (key.startsWith('font-')) return key;
+  const allowed = new Set(['sans', 'serif', 'mono', 'inter', 'roboto', 'opensans', 'system']);
+  return allowed.has(key) ? `font-${key}` : '';
+}
+
+function mapTextDecoration(value: unknown): string | '' {
+  if (typeof value !== 'string' || !value) return '';
+  const key = value.trim();
+  const mapping: Record<string, string> = {
+    'underline': 'underline',
+    'line-through': 'line-through',
+    'overline': 'overline',
+    'none': 'no-underline',
+  };
+  return mapping[key] ?? '';
+}
+
+function mapTextTransform(value: unknown): string | '' {
+  if (typeof value !== 'string' || !value) return '';
+  const key = value.trim();
+  const allowed = new Set(['uppercase', 'lowercase', 'capitalize', 'normal-case']);
+  return allowed.has(key) ? key : '';
 }
 
 function mapWidth(value: unknown): string | '' {
@@ -100,7 +127,7 @@ function mapWidth(value: unknown): string | '' {
   const key = value.trim();
   // accept w-*, max-w-*
   if (key.startsWith('w-') || key.startsWith('max-w-')) return key;
-  const allowed = new Set(['auto','full','screen']);
+  const allowed = new Set(['auto', 'full', 'screen']);
   return allowed.has(key) ? `w-${key}` : '';
 }
 
@@ -108,7 +135,7 @@ function mapMaxWidthClass(value: unknown): string | '' {
   if (typeof value !== 'string' || !value) return '';
   const key = value.trim();
   if (key.startsWith('max-w-')) return key;
-  const allowed = new Set(['0','xs','sm','md','lg','xl','2xl','3xl','4xl','5xl','6xl','7xl','full','min','max','fit','prose','screen-sm','screen-md','screen-lg','screen-xl','screen-2xl']);
+  const allowed = new Set(['0', 'xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl', 'full', 'min', 'max', 'fit', 'prose', 'screen-sm', 'screen-md', 'screen-lg', 'screen-xl', 'screen-2xl']);
   return allowed.has(key) ? `max-w-${key}` : '';
 }
 
@@ -141,14 +168,14 @@ function mapGapClass(value: unknown): string | '' {
 function mapAlignItems(value: unknown): string | '' {
   if (typeof value !== 'string' || !value) return '';
   const key = value.trim();
-  const allowed = new Set(['start','end','center','baseline','stretch']);
+  const allowed = new Set(['start', 'end', 'center', 'baseline', 'stretch']);
   return allowed.has(key) ? `items-${key}` : '';
 }
 
 function mapJustifyContent(value: unknown): string | '' {
   if (typeof value !== 'string' || !value) return '';
   const key = value.trim();
-  const allowed = new Set(['start','end','center','between','around','evenly']);
+  const allowed = new Set(['start', 'end', 'center', 'between', 'around', 'evenly']);
   return allowed.has(key) ? `justify-${key}` : '';
 }
 
@@ -170,7 +197,7 @@ function mapBorderWidth(value: unknown): string | '' {
 function mapBorderStyle(value: unknown): string | '' {
   if (typeof value !== 'string' || !value) return '';
   const key = value.trim();
-  const allowed = new Set(['solid','dashed','dotted','double','none']);
+  const allowed = new Set(['solid', 'dashed', 'dotted', 'double', 'none']);
   return allowed.has(key) ? `border-${key}` : '';
 }
 
@@ -200,12 +227,12 @@ function mapBaseProps(props: BaseStyleProps, tokens: ThemeTokens): string[] {
   // 7) item gap
   if ((props as any).itemGap !== undefined) classes.push(mapItemGap((props as any).itemGap));
   // 8) padding/margins (p.. then m..)
-  const paddingKeys = ['p','pt','pr','pb','pl','px','py'] as const;
+  const paddingKeys = ['p', 'pt', 'pr', 'pb', 'pl', 'px', 'py'] as const;
   for (const key of paddingKeys) {
     const val = (props as any)[key];
     if (val !== undefined) classes.push(mapSpacing(key, val));
   }
-  const marginKeys = ['m','mt','mr','mb','ml','mx','my'] as const;
+  const marginKeys = ['m', 'mt', 'mr', 'mb', 'ml', 'mx', 'my'] as const;
   for (const key of marginKeys) {
     const val = (props as any)[key];
     if (val !== undefined) classes.push(mapSpacing(key, val));
@@ -221,11 +248,14 @@ function mapBaseProps(props: BaseStyleProps, tokens: ThemeTokens): string[] {
   // 13) shadow
   if (props.shadow !== undefined) classes.push(mapShadow(props.shadow));
   // 14) typography then colors
+  if ((props as any).fontFamily !== undefined) classes.push(mapFontFamily((props as any).fontFamily));
   if (props.fontSize !== undefined) classes.push(mapFontSize(props.fontSize));
   if (props.fontWeight !== undefined) classes.push(mapFontWeight(props.fontWeight));
   if (props.lineHeight !== undefined) classes.push(mapLineHeight(props.lineHeight));
   if ((props as any).letterSpacing !== undefined) classes.push(mapLetterSpacing((props as any).letterSpacing));
   if ((props as any).textAlign !== undefined) classes.push(mapTextAlign((props as any).textAlign));
+  if ((props as any).textDecoration !== undefined) classes.push(mapTextDecoration((props as any).textDecoration));
+  if ((props as any).textTransform !== undefined) classes.push(mapTextTransform((props as any).textTransform));
   // text/bg at the very end
   if (props.text !== undefined) classes.push(mapTextColor(props.text, tokens));
   if (props.bg !== undefined) classes.push(mapBg(props.bg, tokens));
@@ -234,13 +264,14 @@ function mapBaseProps(props: BaseStyleProps, tokens: ThemeTokens): string[] {
 
 export function mapStylesToClasses(styles: StyleRecord, tokens: ThemeTokens): string {
   if (!styles) return '';
-  // separate responsive keys
-  const { sm, md, lg, ...base } = styles as AnyStyles;
+  // separate responsive and hover keys
+  const { sm, md, lg, hover, ...base } = styles as AnyStyles & { hover?: BaseStyleProps };
   const baseClasses = mapBaseProps(base as BaseStyleProps, tokens);
+  const hoverClasses = mapBaseProps((hover ?? {}) as BaseStyleProps, tokens).map((c) => (c ? `hover:${c}` : ''));
   const smClasses = mapBaseProps((sm ?? {}) as BaseStyleProps, tokens).map((c) => (c ? `sm:${c}` : ''));
   const mdClasses = mapBaseProps((md ?? {}) as BaseStyleProps, tokens).map((c) => (c ? `md:${c}` : ''));
   const lgClasses = mapBaseProps((lg ?? {}) as BaseStyleProps, tokens).map((c) => (c ? `lg:${c}` : ''));
-  return [...baseClasses, ...smClasses, ...mdClasses, ...lgClasses].filter(Boolean).join(' ');
+  return [...baseClasses, ...hoverClasses, ...smClasses, ...mdClasses, ...lgClasses].filter(Boolean).join(' ');
 }
 
 export function mergeStylesNonDestructive<T extends object | undefined, U extends object | undefined>(existing: T, incoming: U): T & U {

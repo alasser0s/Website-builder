@@ -277,7 +277,7 @@
   width: 320px;
 }
 
-.panel-section + .panel-section {
+.panel-section+.panel-section {
   margin-top: 22px;
 }
 
@@ -290,7 +290,7 @@
   font-weight: 600;
 }
 
-.panel-group + .panel-group {
+.panel-group+.panel-group {
   margin-top: 16px;
 }
 
@@ -484,9 +484,46 @@
 }
 
 .builder-canvas [data-selected="true"] {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-  box-shadow: 0 0 0 3px rgba(27, 153, 139, 0.15);
+  position: relative;
+}
+
+/* Corner handle size */
+.builder-canvas [data-selected="true"]::before,
+.builder-canvas [data-selected="true"]::after,
+.builder-canvas [data-selected="true"]>.selection-corners::before,
+.builder-canvas [data-selected="true"]>.selection-corners::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #1976d2;
+  z-index: 100;
+  pointer-events: none;
+}
+
+/* Top-left corner */
+.builder-canvas [data-selected="true"]::before {
+  top: -6px;
+  left: -6px;
+}
+
+/* Top-right corner */
+.builder-canvas [data-selected="true"]::after {
+  top: -6px;
+  right: -6px;
+}
+
+/* Selection border */
+.builder-canvas [data-selected="true"] {
+  outline: 2px solid #1976d2;
+  outline-offset: 0px;
+}
+
+/* Section-level selection has light overlay */
+.builder-canvas [data-selected="true"][data-node-type="section"],
+.builder-canvas [data-selected="true"][data-node-type="container"],
+.builder-canvas [data-selected="true"][data-node-type="row"] {
+  background-color: rgba(233, 200, 200, 0.35);
 }
 
 .builder-canvas [data-drop="before"]::before,
@@ -504,6 +541,32 @@
 
 .builder-canvas [data-drop="after"]::after {
   bottom: -6px;
+}
+
+/* ========================================
+   Selection Corner Overlay Handles
+   ======================================== */
+.selection-corner {
+  width: 12px;
+  height: 12px;
+  background: #1976d2;
+  z-index: 150;
+  pointer-events: none;
+}
+
+/* ========================================
+   Element Type Label
+   ======================================== */
+.element-type-label {
+  background: #1976d2;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 4px;
+  z-index: 151;
+  direction: rtl;
+  white-space: nowrap;
 }
 
 .builder-loading,
@@ -1100,6 +1163,7 @@
 }
 
 @media (max-width: 980px) {
+
   .nav-shell--top,
   .nav-shell--side {
     grid-template-columns: 1fr auto;
@@ -1429,4 +1493,467 @@
   .map-location {
     grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
   }
+}
+
+/* Text Hover Toolbar */
+.text-hover-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 6px 10px;
+  box-shadow: 0 8px 24px rgba(30, 25, 18, 0.15);
+  animation: toolbar-fade-in 0.15s ease;
+}
+
+@keyframes toolbar-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.toolbar-btn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.toolbar-btn:hover {
+  background: rgba(27, 153, 139, 0.1);
+  border-color: rgba(27, 153, 139, 0.3);
+}
+
+.toolbar-btn.active {
+  background: rgba(27, 153, 139, 0.15);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.toolbar-separator {
+  width: 1px;
+  height: 18px;
+  background: var(--border);
+  margin: 0 4px;
+}
+
+.toolbar-size-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  min-width: 32px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.toolbar-select {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  background: #fff;
+  cursor: pointer;
+  min-width: 70px;
+}
+
+.toolbar-select:focus {
+  outline: none;
+  border-color: rgba(27, 153, 139, 0.5);
+}
+
+/* ========================================
+   Selection Corner Handles (Bottom)
+   ======================================== */
+.selection-corners {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 99;
+}
+
+.selection-corner {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #1976d2;
+}
+
+.selection-corner--bl {
+  bottom: -6px;
+  left: -6px;
+}
+
+.selection-corner--br {
+  bottom: -6px;
+  right: -6px;
+}
+
+/* ========================================
+   Element Type Label
+   ======================================== */
+.element-type-label {
+  position: absolute;
+  top: -28px;
+  left: 0;
+  background: #1976d2;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 4px;
+  z-index: 101;
+  pointer-events: none;
+  white-space: nowrap;
+  direction: rtl;
+}
+
+/* ========================================
+   Delete Button
+   ======================================== */
+.component-delete-btn {
+  position: absolute;
+  top: -28px;
+  right: 0;
+  background: #1976d2;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 101;
+  transition: background 0.15s ease;
+  direction: rtl;
+}
+
+.component-delete-btn:hover {
+  background: #1565c0;
+}
+
+.component-delete-btn svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+
+/* ========================================
+   Editor Popup Base Styles
+   ======================================== */
+.editor-popup {
+  position: absolute;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+  z-index: 200;
+  min-width: 280px;
+  max-width: 320px;
+  direction: rtl;
+  animation: popup-fade-in 0.2s ease;
+}
+
+@keyframes popup-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.editor-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.editor-popup-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.editor-popup-close,
+.editor-popup-help {
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #666;
+  transition: background 0.15s ease;
+}
+
+.editor-popup-close:hover,
+.editor-popup-help:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.editor-popup-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.editor-popup-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ========================================
+   Popup Form Controls
+   ======================================== */
+.popup-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.popup-field-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+}
+
+.popup-select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  direction: rtl;
+}
+
+.popup-select:focus {
+  outline: none;
+  border-color: #1976d2;
+}
+
+.popup-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 14px;
+  direction: rtl;
+}
+
+.popup-input:focus {
+  outline: none;
+  border-color: #1976d2;
+}
+
+/* ========================================
+   Image Popup Specific
+   ======================================== */
+.image-preview-container {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.image-preview-img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  display: block;
+}
+
+.image-upload-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.image-upload-btn:hover {
+  background: #1565c0;
+}
+
+.image-upload-input {
+  display: none;
+}
+
+/* AI Edit Button */
+.ai-edit-btn {
+  width: 100%;
+  padding: 12px 16px;
+  background: transparent;
+  border: 2px solid #1976d2;
+  border-radius: 8px;
+  color: #1976d2;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  direction: rtl;
+}
+
+.ai-edit-btn:hover {
+  background: rgba(25, 118, 210, 0.08);
+}
+
+/* ========================================
+   Text Popup Specific
+   ======================================== */
+.font-size-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.font-size-input {
+  width: 60px;
+  padding: 8px 10px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 14px;
+  text-align: center;
+}
+
+.font-size-slider {
+  flex: 1;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+  outline: none;
+}
+
+.font-size-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #1976d2;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.font-size-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #1976d2;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+
+.text-format-group {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.text-format-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.text-format-btn:hover {
+  background: rgba(25, 118, 210, 0.08);
+  border-color: rgba(25, 118, 210, 0.3);
+}
+
+.text-format-btn.active {
+  background: rgba(25, 118, 210, 0.12);
+  border-color: #1976d2;
+  color: #1976d2;
+}
+
+.text-format-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.text-align-group {
+  display: flex;
+  gap: 4px;
+}
+
+.format-divider {
+  width: 1px;
+  height: 24px;
+  background: rgba(0, 0, 0, 0.1);
+  margin: 0 4px;
+  align-self: center;
+}
+
+/* Color picker button */
+.color-picker-btn {
+  position: relative;
+}
+
+.color-picker-btn input[type="color"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.color-indicator {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
 }

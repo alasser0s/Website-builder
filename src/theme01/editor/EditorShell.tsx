@@ -6,8 +6,10 @@ import type { BlueprintNode, BlueprintStateSnapshot } from '../foundation/types'
 import { selectNodeById, selectPath } from '../foundation/selectors';
 import { ContentPanel } from './ContentPanel';
 import { StylesPanel } from '../panels/StylesPanel';
+import { TextHoverToolbar } from './TextHoverToolbar';
+import { ImageEditorPopup } from './ImageEditorPopup';
 import { BLOCK_PRESETS, BLOCK_SECTIONS } from './presets';
-import { createPage, fetchWebsiteEditor, getApiBase, publishWebsite, updatePage, type EditorPage, type EditorWebsite } from './api';
+import { createPage, createSignedUpload, fetchWebsiteEditor, getApiBase, publishWebsite, updatePage, uploadFileToSignedUrl, type EditorPage, type EditorWebsite } from './api';
 
 type EditorPageEntry = EditorPage & { snapshot: BlueprintStateSnapshot };
 
@@ -29,6 +31,22 @@ type DropTarget = {
 
 const DRAGGABLE_TYPES = new Set(['section', 'row', 'container']);
 const ALLOWED_PARENT_TYPES = new Set(['page', 'section', 'container']);
+const TEXT_NODE_TYPES = new Set(['heading', 'paragraph', 'button']);
+
+// Arabic labels for element types
+const ELEMENT_TYPE_LABELS: Record<string, string> = {
+  heading: 'عنوان',
+  paragraph: 'نص',
+  button: 'زر',
+  image: 'صورة',
+  section: 'قسم',
+  container: 'حاوية',
+  row: 'صف',
+  column: 'عمود',
+  list: 'قائمة',
+  footer: 'تذييل',
+  nav: 'قائمة التنقل',
+};
 
 function buildPageDraft(page: EditorPage | null): PageDraft {
   const meta = (page?.meta_data ?? {}) as Record<string, unknown>;
@@ -130,6 +148,11 @@ export function EditorShell() {
   const dropIndicatorRef = useRef<DropTarget | null>(null);
   const newPageRef = useRef<HTMLInputElement | null>(null);
   const [dropTarget, setDropTarget] = useState<DropTarget | null>(null);
+  const [showTextPopup, setShowTextPopup] = useState(false);
+  const [showImagePopup, setShowImagePopup] = useState(false);
+  const [popupPosition, setPopupPosition] = useState({ top: 100, left: 100 });
+  const [selectionRect, setSelectionRect] = useState<{ top: number; left: number; width: number; height: number } | null>(null);
+  const canvasFrameRef = useRef<HTMLDivElement>(null);
   const apiBase = useMemo(getApiBase, []);
 
   const {
@@ -265,9 +288,24 @@ export function EditorShell() {
       if (prev) prev.removeAttribute('data-selected');
     }
     if (activeNodeId) {
-      const next = document.querySelector(`[data-node-id="${activeNodeId}"]`);
-      if (next) next.setAttribute('data-selected', 'true');
+      const next = document.querySelector(`[data-node-id="${activeNodeId}"]`) as HTMLElement | null;
+      if (next) {
+        next.setAttribute('data-selected', 'true');
+        // Calculate selection rect relative to canvas frame
+        if (canvasFrameRef.current) {
+          const canvasRect = canvasFrameRef.current.getBoundingClientRect();
+          const nodeRect = next.getBoundingClientRect();
+          setSelectionRect({
+            top: nodeRect.top - canvasRect.top,
+            left: nodeRect.left - canvasRect.left,
+            width: nodeRect.width,
+            height: nodeRect.height,
+          });
+        }
+      }
       selectedRef.current = activeNodeId;
+    } else {
+      setSelectionRect(null);
     }
   }, [activeNodeId, state.present]);
 
@@ -514,7 +552,33 @@ export function EditorShell() {
     const nodeEl = target.closest('[data-node-id]') as HTMLElement | null;
     if (nodeEl) {
       const id = nodeEl.getAttribute('data-node-id');
-      if (id) setActiveNodeId(id);
+      const nodeType = nodeEl.getAttribute('data-node-type') || '';
+      if (id) {
+        setActiveNodeId(id);
+        // Calculate popup position relative to canvas
+        const canvasFrame = nodeEl.closest('.canvas-frame');
+        if (canvasFrame) {
+          const canvasRect = canvasFrame.getBoundingClientRect();
+          const nodeRect = nodeEl.getBoundingClientRect();
+          const popTop = Math.max(8, nodeRect.top - canvasRect.top + 40);
+          const popLeft = Math.min(
+            canvasRect.width - 340,
+            Math.max(8, nodeRect.right - canvasRect.left - 320)
+          );
+          setPopupPosition({ top: popTop, left: popLeft });
+        }
+        // Show appropriate popup
+        if (TEXT_NODE_TYPES.has(nodeType)) {
+          setShowTextPopup(true);
+          setShowImagePopup(false);
+        } else if (nodeType === 'image') {
+          setShowImagePopup(true);
+          setShowTextPopup(false);
+        } else {
+          setShowTextPopup(false);
+          setShowImagePopup(false);
+        }
+      }
     }
   }, []);
 
@@ -617,7 +681,111 @@ export function EditorShell() {
           onDropCapture={handleDrop}
           onDragEndCapture={handleDragEnd}
         >
-          <div className="canvas-frame">
+          <div className="canvas-frame" ref={canvasFrameRef} style={{ position: 'relative' }}>
+            {/* Selection Overlay - Delete Button and Element Label */}
+            {selectionRect && selectedNode && selectedNode.type !== 'page' && (
+              <>
+                {/* Element Type Label */}
+                <div
+                  className="element-type-label"
+                  style={{
+                    position: 'absolute',
+                    top: selectionRect.top - 28,
+                    left: selectionRect.left,
+                  }}
+                >
+                  {ELEMENT_TYPE_LABELS[selectedNode.type] || selectedNode.type}
+                </div>
+                {/* Delete Button - Only for draggable types */}
+                {DRAGGABLE_TYPES.has(selectedNode.type) && (
+                  <button
+                    type="button"
+                    className="component-delete-btn"
+                    style={{
+                      position: 'absolute',
+                      top: selectionRect.top - 28,
+                      left: selectionRect.left + selectionRect.width - 60,
+                    }}
+                    onClick={() => {
+                      const parentInfo = getParentInfo(state.present.root, selectedNode.id);
+                      if (parentInfo) {
+                        remove(selectedNode.id);
+                        setActiveNodeId(parentInfo.parentId);
+                      }
+                    }}
+                  >
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM8 9h8v10H8V9zm7.5-5l-1-1h-5l-1 1H5v2h14V4h-3.5z" />
+                    </svg>
+                    حذف
+                  </button>
+                )}
+                {/* Corner Handles - All 4 corners */}
+                <div
+                  className="selection-corner selection-corner--tl"
+                  style={{
+                    position: 'absolute',
+                    top: selectionRect.top - 6,
+                    left: selectionRect.left - 6,
+                  }}
+                />
+                <div
+                  className="selection-corner selection-corner--tr"
+                  style={{
+                    position: 'absolute',
+                    top: selectionRect.top - 6,
+                    left: selectionRect.left + selectionRect.width - 6,
+                  }}
+                />
+                <div
+                  className="selection-corner selection-corner--bl"
+                  style={{
+                    position: 'absolute',
+                    top: selectionRect.top + selectionRect.height - 6,
+                    left: selectionRect.left - 6,
+                  }}
+                />
+                <div
+                  className="selection-corner selection-corner--br"
+                  style={{
+                    position: 'absolute',
+                    top: selectionRect.top + selectionRect.height - 6,
+                    left: selectionRect.left + selectionRect.width - 6,
+                  }}
+                />
+              </>
+            )}
+            {/* Text Editor Popup */}
+            {showTextPopup && selectedNode && TEXT_NODE_TYPES.has(selectedNode.type) && (
+              <TextHoverToolbar
+                nodeId={selectedNode.id}
+                nodeType={selectedNode.type as 'heading' | 'paragraph' | 'button'}
+                styles={(selectedNode.styles ?? {}) as Record<string, unknown>}
+                onUpdateStyles={(id, patch) => updateStyles(id, patch)}
+                position={popupPosition}
+                onClose={() => setShowTextPopup(false)}
+              />
+            )}
+            {/* Image Editor Popup */}
+            {showImagePopup && selectedNode && selectedNode.type === 'image' && (
+              <ImageEditorPopup
+                nodeId={selectedNode.id}
+                currentSrc={((selectedNode.data as Record<string, unknown>)?.src as string) ?? ''}
+                objectFit={((selectedNode.data as Record<string, unknown>)?.objectFit as string) ?? 'cover'}
+                position={popupPosition}
+                onClose={() => setShowImagePopup(false)}
+                onUpdateData={(id, data) => updateData(id, data)}
+                onUpload={async (file) => {
+                  try {
+                    const signedUpload = await createSignedUpload(file.name);
+                    const publicUrl = await uploadFileToSignedUrl(file, signedUpload);
+                    updateData(selectedNode.id, { src: publicUrl });
+                  } catch (err: any) {
+                    setError(err?.message || 'Failed to upload image');
+                  }
+                }}
+              />
+            )}
             <BlueprintProvider
               snapshot={state.present}
               actions={{ addComponent, reorder, wrapInContainer, remove, moveNode, wrapAndMove }}

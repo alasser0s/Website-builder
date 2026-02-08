@@ -88,7 +88,7 @@ function toShadowTokens(shadow: Record<string, string>): ThemeShadowTokens {
 const spacing: ThemeSpacingTokens = (() => {
   const map: ThemeSpacingTokens = {};
   // Preserve existing numeric steps commonly used by StylesPanel
-  const allowed = new Set(['0','1','2','3','4','5','6','8','10','12','16']);
+  const allowed = new Set(['0', '1', '2', '3', '4', '5', '6', '8', '10', '12', '16']);
   for (const step of allowed) {
     const n = Number(step);
     if (Number.isFinite(n)) {
@@ -124,9 +124,12 @@ export type AllowedStyleProp =
   | 'shadow'
   | 'fontSize'
   | 'fontWeight'
+  | 'fontFamily'
   | 'display'
   | 'lineHeight'
   | 'letterSpacing'
+  | 'textDecoration'
+  | 'textTransform'
   | 'width'
   | 'maxWidth'
   | 'indent'
@@ -145,7 +148,7 @@ export const allowedStyleProps: AllowedStyleProp[] = [
   'textAlign',
   'p', 'pt', 'pr', 'pb', 'pl', 'px', 'py',
   'm', 'mt', 'mr', 'mb', 'ml', 'mx', 'my',
-  'rounded', 'shadow', 'fontSize', 'fontWeight', 'display',
-  'lineHeight', 'letterSpacing', 'width', 'maxWidth', 'indent', 'itemGap', 'listStyle', 'thickness', 'gap', 'align', 'justify', 'borderWidth', 'borderStyle', 'borderColor',
+  'rounded', 'shadow', 'fontSize', 'fontWeight', 'fontFamily', 'display',
+  'lineHeight', 'letterSpacing', 'textDecoration', 'textTransform', 'width', 'maxWidth', 'indent', 'itemGap', 'listStyle', 'thickness', 'gap', 'align', 'justify', 'borderWidth', 'borderStyle', 'borderColor',
 ];
 
