@@ -7,7 +7,7 @@ interface ImageEditorPopupProps {
     position: { top: number; left: number };
     onClose: () => void;
     onUpdateStyles: (nodeId: string, styles: Record<string, unknown>) => void;
-    onUpdateData: (nodeId: string, data: Record<string, unknown>) => void;
+    // onUpdateData removed as it is no longer used (objectFit uses onUpdateStyles)
     onUpload: (file: File) => void;
 }
 
@@ -25,7 +25,6 @@ export function ImageEditorPopup({
     position,
     onClose,
     onUpdateStyles,
-    onUpdateData,
     onUpload,
 }: ImageEditorPopupProps) {
     const fileInputRef = useRef<HTMLInputElement>(null);

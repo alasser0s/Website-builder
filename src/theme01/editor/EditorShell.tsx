@@ -793,7 +793,6 @@ export function EditorShell() {
                 position={popupPosition}
                 onClose={() => setShowImagePopup(false)}
                 onUpdateStyles={(id, styles) => updateStyles(id, styles)}
-                onUpdateData={(id, data) => updateData(id, data)}
                 onUpload={async (file) => {
                   try {
                     const signedUpload = await createSignedUpload(file.name);
