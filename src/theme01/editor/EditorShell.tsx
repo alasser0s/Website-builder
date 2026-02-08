@@ -718,11 +718,25 @@ export function EditorShell() {
                       zIndex: 50,
                       cursor: 'pointer',
                     }}
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
                       const parentInfo = getParentInfo(state.present.root, selectedNode.id);
+                      remove(selectedNode.id);
                       if (parentInfo) {
-                        remove(selectedNode.id);
-                        setActiveNodeId(parentInfo.parentId);
+                        try {
+                          // Verify parent still exists before selecting
+                          const parent = selectNodeById(state.present.root, parentInfo.parentId);
+                          if (parent) {
+                            setActiveNodeId(parentInfo.parentId);
+                          } else {
+                            setActiveNodeId(null as any);
+                          }
+                        } catch (err) {
+                          setActiveNodeId(null as any);
+                        }
+                      } else {
+                        setActiveNodeId(null as any);
                       }
                     }}
                   >
