@@ -9,15 +9,9 @@ interface TextEditorPopupProps {
     onClose: () => void;
 }
 
-const FONT_FAMILY_OPTIONS = [
-    { label: 'Default', value: 'font-sans' },
-    { label: 'Serif', value: 'font-serif' },
-    { label: 'Mono', value: 'font-mono' },
-];
 
-const COLORS = [
-    '#000000', '#ffffff', '#ef4444', '#f97316', '#f59e0b', '#84cc16', '#10b981', '#06b6d4', '#3b82f6', '#6366f1', '#8b5cf6', '#d946ef', '#f43f5e'
-];
+
+
 
 // Helper to safely get font size number
 const getFontSizeValue = (val: unknown): number => {
@@ -31,7 +25,7 @@ export function TextHoverToolbar({
     styles,
     onUpdateStyles,
     position,
-    onClose,
+
 }: TextEditorPopupProps) {
     // --- HELPER FUNCTIONS FOR CSS STRINGS ---
     const isBold = (s: any) => s.fontWeight === 'bold' || s.fontWeight === 700 || s.fontWeight === '700';
