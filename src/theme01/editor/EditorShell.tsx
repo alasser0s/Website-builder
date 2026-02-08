@@ -35,8 +35,7 @@ const TEXT_NODE_TYPES = new Set(['heading', 'paragraph', 'button']);
 // All node types that can be deleted (excludes page, header, footer which are structural)
 const DELETABLE_TYPES = new Set([
   'section', 'row', 'container', 'column',
-  'heading', 'paragraph', 'button', 'image', 'list',
-  'badge', 'divider', 'card',
+  'card',
   'features', 'gallery', 'slider', 'testimonials',
   'input', 'textarea', 'select',
   'map', 'opening_hours', 'menu_grid', 'cart',
@@ -771,8 +770,8 @@ export function EditorShell() {
                 nodeType={selectedNode.type as 'heading' | 'paragraph' | 'button'}
                 // Merge data (base) with styles (overrides) so toolbar sees all values
                 styles={{
-                  ...selectedNode.data,
-                  ...(selectedNode.styles || {})
+                  ...(selectedNode.data as Record<string, unknown> ?? {}),
+                  ...(selectedNode.styles as Record<string, unknown> ?? {}),
                 }}
                 onUpdateStyles={(id, patch) => updateStyles(id, patch)}
                 position={popupPosition}
