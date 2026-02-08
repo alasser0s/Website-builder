@@ -835,8 +835,8 @@ export function validateNode(node: BlueprintNode, isRoot = false, collector?: Va
         errors.push('Image data.alt must be a non-empty string');
       }
       const objectFit = (data as any).objectFit;
-      if (objectFit !== undefined && objectFit !== 'cover' && objectFit !== 'contain') {
-        errors.push('Image data.objectFit must be cover|contain when provided');
+      if (objectFit !== undefined && objectFit !== 'cover' && objectFit !== 'contain' && objectFit !== 'fill' && objectFit !== 'none') {
+        errors.push('Image data.objectFit must be cover|contain|fill|none when provided');
       }
       const aspect = (data as any).aspect;
       if (aspect !== undefined && aspect !== '1:1' && aspect !== '4:3' && aspect !== '16:9') {

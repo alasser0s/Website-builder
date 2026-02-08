@@ -94,14 +94,35 @@ function buildBaseUtilities(): Utility[] {
   utils.push(makeUtility('no-underline', 'text-decoration:none'));
   utils.push(makeUtility('line-through', 'text-decoration:line-through'));
   utils.push(makeUtility('overline', 'text-decoration:overline'));
-  // Text alignment
+
+  // Font style
+  utils.push(makeUtility('italic', 'font-style:italic'));
+  utils.push(makeUtility('not-italic', 'font-style:normal'));
+
+  // Text alignment (including RTL-compatible start/end)
   utils.push(makeUtility('text-left', 'text-align:left'));
   utils.push(makeUtility('text-center', 'text-align:center'));
   utils.push(makeUtility('text-right', 'text-align:right'));
   utils.push(makeUtility('text-justify', 'text-align:justify'));
+  utils.push(makeUtility('text-start', 'text-align:start'));
+  utils.push(makeUtility('text-end', 'text-align:end'));
+
+  // Additional font families for Arabic fonts
+  const arabicFonts: Record<string, string> = {
+    'cairo': '"Cairo", sans-serif',
+    'tajawal': '"Tajawal", sans-serif',
+    'almarai': '"Almarai", sans-serif',
+    'ibm-plex-sans-arabic': '"IBM Plex Sans Arabic", sans-serif',
+    'noto-sans-arabic': '"Noto Sans Arabic", sans-serif',
+    'inter': '"Inter", sans-serif',
+    'roboto': '"Roboto", sans-serif',
+  };
+  for (const [k, v] of Object.entries(arabicFonts)) {
+    utils.push(makeUtility(`font-${k}`, `font-family:${v}`));
+  }
 
   // Display
-  const displays = ['block','inline','inline-block','flex','inline-flex','grid','inline-grid','contents'];
+  const displays = ['block', 'inline', 'inline-block', 'flex', 'inline-flex', 'grid', 'inline-grid', 'contents'];
   for (const d of displays) utils.push(makeUtility(d, `display:${d}`));
   utils.push(makeUtility('hidden', 'display:none'));
   // Grid helpers used by Row/Column renderer
@@ -157,7 +178,7 @@ function buildBaseUtilities(): Utility[] {
     const px = toPx(step);
     utils.push(makeUtility(`border-${step}`, `border-width:${px}`));
   }
-  const bs = ['solid','dashed','dotted','double','none'] as const;
+  const bs = ['solid', 'dashed', 'dotted', 'double', 'none'] as const;
   for (const s of bs) utils.push(makeUtility(`border-${s}`, `border-style:${s}`));
   // Rounded full convenience
   utils.push(makeUtility('rounded-full', 'border-radius:9999px'));

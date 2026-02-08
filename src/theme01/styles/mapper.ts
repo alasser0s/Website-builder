@@ -67,8 +67,16 @@ function mapFontWeight(value: unknown): string | '' {
 function mapTextAlign(value: unknown): string | '' {
   if (typeof value !== 'string' || !value) return '';
   const key = value.trim();
-  const allowed = new Set(['left', 'center', 'right', 'justify']);
-  return allowed.has(key) ? `text-${key}` : '';
+  // Map 'start'/'end' to 'left'/'right' for RTL/LTR compatibility
+  const mapping: Record<string, string> = {
+    'left': 'text-left',
+    'center': 'text-center',
+    'right': 'text-right',
+    'justify': 'text-justify',
+    'start': 'text-start',
+    'end': 'text-end',
+  };
+  return mapping[key] ?? '';
 }
 
 function mapDisplay(value: unknown): string | '' {
@@ -99,8 +107,15 @@ function mapFontFamily(value: unknown): string | '' {
   if (typeof value !== 'string' || !value) return '';
   const key = value.trim();
   if (key.startsWith('font-')) return key;
-  const allowed = new Set(['sans', 'serif', 'mono', 'inter', 'roboto', 'opensans', 'system']);
-  return allowed.has(key) ? `font-${key}` : '';
+  if (key === 'inherit') return ''; // Don't output class for inherit
+  // Map common fonts to CSS font-family via inline style approach
+  // For now, we support these as classes that should be defined in CSS
+  const allowed = new Set([
+    'sans', 'serif', 'mono', 'inter', 'roboto', 'opensans', 'system',
+    'cairo', 'tajawal', 'almarai', 'ibm-plex-sans-arabic', 'noto-sans-arabic'
+  ]);
+  const normalized = key.toLowerCase().replace(/\s+/g, '-');
+  return allowed.has(normalized) ? `font-${normalized}` : '';
 }
 
 function mapTextDecoration(value: unknown): string | '' {
@@ -120,6 +135,16 @@ function mapTextTransform(value: unknown): string | '' {
   const key = value.trim();
   const allowed = new Set(['uppercase', 'lowercase', 'capitalize', 'normal-case']);
   return allowed.has(key) ? key : '';
+}
+
+function mapFontStyle(value: unknown): string | '' {
+  if (typeof value !== 'string' || !value) return '';
+  const key = value.trim();
+  const mapping: Record<string, string> = {
+    'italic': 'italic',
+    'normal': 'not-italic',
+  };
+  return mapping[key] ?? '';
 }
 
 function mapWidth(value: unknown): string | '' {
@@ -256,6 +281,7 @@ function mapBaseProps(props: BaseStyleProps, tokens: ThemeTokens): string[] {
   if ((props as any).textAlign !== undefined) classes.push(mapTextAlign((props as any).textAlign));
   if ((props as any).textDecoration !== undefined) classes.push(mapTextDecoration((props as any).textDecoration));
   if ((props as any).textTransform !== undefined) classes.push(mapTextTransform((props as any).textTransform));
+  if ((props as any).fontStyle !== undefined) classes.push(mapFontStyle((props as any).fontStyle));
   // text/bg at the very end
   if (props.text !== undefined) classes.push(mapTextColor(props.text, tokens));
   if (props.bg !== undefined) classes.push(mapBg(props.bg, tokens));
