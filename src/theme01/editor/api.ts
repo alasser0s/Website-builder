@@ -301,6 +301,7 @@ export function publishWebsite(websiteId: number) {
 export type SignedUploadPayload = {
   url: string;
   fields: Record<string, string>;
+  cdn_url?: string;
 };
 
 export function createSignedUpload(fileName: string, fileType: string) {
@@ -329,6 +330,19 @@ export async function uploadFileToSignedUrl(file: File, payload: SignedUploadPay
   if (!response.ok) {
     throw new Error('Upload failed.');
   }
+
+  // Prioritize Content Delivery Network (CDN) URL if available
+  if (payload.cdn_url) {
+    return payload.cdn_url;
+  }
+
+  // Fallback: Construct S3 URL manually
   const key = payload.fields?.key;
-  return key ? `${payload.url}/${key}` : payload.url;
+  if (!key) return payload.url;
+
+  // Sanitize to prevent double slashes
+  const baseUrl = payload.url.endsWith('/') ? payload.url.slice(0, -1) : payload.url;
+  const objectKey = key.startsWith('/') ? key.slice(1) : key;
+
+  return `${baseUrl}/${objectKey}`;
 }
