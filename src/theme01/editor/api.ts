@@ -187,12 +187,19 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   }
   const base = resolveApiBase();
   const token = options.token ?? getToken();
-  const headers: Record<string, string> = {
+  const method = options.method || 'GET';
+  const headers = new Headers({
     'Content-Type': 'application/json',
-  };
-  if (token) headers.Authorization = `Bearer ${token}`;
+  });
+  if (token) headers.append('Authorization', `Bearer ${token}`);
+
+  console.log('[API Request]', method, path, {
+    headers: Object.fromEntries(headers.entries()),
+    body: options.body
+  });
+
   const response = await fetch(`${base}${path}`, {
-    method: options.method || 'GET',
+    method,
     headers,
     body: options.body ? JSON.stringify(options.body) : undefined,
     credentials: 'include',
@@ -200,7 +207,9 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   const text = await response.text();
   const data = safeParse(text);
   if (!response.ok) {
-    const message = typeof data?.detail === 'string' ? data.detail : 'Request failed.';
+    const message = typeof data?.detail === 'string'
+      ? data.detail
+      : (data ? JSON.stringify(data) : 'Request failed.');
     const error: any = new Error(message);
     error.status = response.status;
     throw error;
