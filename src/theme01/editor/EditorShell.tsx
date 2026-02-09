@@ -711,6 +711,7 @@ export function EditorShell() {
                   <button
                     type="button"
                     className="component-delete-btn"
+                    data-editor-interactive="true"
                     style={{
                       position: 'absolute',
                       top: selectionRect.top - 28,
