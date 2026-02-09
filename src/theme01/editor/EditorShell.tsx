@@ -817,7 +817,7 @@ export function EditorShell() {
                 onUpdateStyles={(id, styles) => updateStyles(id, styles)}
                 onUpload={async (file) => {
                   try {
-                    const signedUpload = await createSignedUpload(file.name);
+                    const signedUpload = await createSignedUpload(file.name, file.type);
                     const publicUrl = await uploadFileToSignedUrl(file, signedUpload);
                     updateData(selectedNode.id, { src: publicUrl });
                   } catch (err: any) {

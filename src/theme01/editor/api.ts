@@ -294,13 +294,13 @@ export type SignedUploadPayload = {
   fields: Record<string, string>;
 };
 
-export function createSignedUpload(fileName: string) {
+export function createSignedUpload(fileName: string, fileType: string) {
   if (USE_MOCKS) {
     return Promise.resolve({ url: 'mock://upload', fields: {} });
   }
   return request<SignedUploadPayload>('/api/v1/uploads/generate-signed-url/', {
     method: 'POST',
-    body: { file_name: fileName },
+    body: { file_name: fileName, file_type: fileType },
   });
 }
 
