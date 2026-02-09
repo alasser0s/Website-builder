@@ -183,7 +183,7 @@ export function ContentPanel({ nodeId, snapshot, updateData }: ContentPanelProps
       setUploadError(null);
       setUploading(true);
       try {
-        const signed = await createSignedUpload(file.name);
+        const signed = await createSignedUpload(file.name, file.type);
         const url = await uploadFileToSignedUrl(file, signed);
         setData({ src: url });
       } catch (err: any) {
@@ -1490,7 +1490,7 @@ export function ContentPanel({ nodeId, snapshot, updateData }: ContentPanelProps
       <div>
         <FieldRow label="Max width">
           <select value={maxWidth} onChange={(e) => setData({ maxWidth: e.target.value })}>
-            {['full','xs','sm','md','lg','xl','2xl','3xl','4xl'].map((value) => (
+            {['full', 'xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl'].map((value) => (
               <option key={value} value={value}>{value}</option>
             ))}
           </select>
