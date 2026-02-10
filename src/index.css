@@ -1,21 +1,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Space+Grotesk:wght@400;500;600;700&family=Cairo:wght@400;500;600;700&family=Tajawal:wght@400;500;700&family=Almarai:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap');
 
 :root {
-  --font-body: "Space Grotesk", sans-serif;
-  --font-display: "Fraunces", serif;
-  --bg: #f4efe9;
-  --surface: #fff9f2;
-  --surface-2: #f0e2d3;
-  --text: #1d1b19;
-  --muted: #6a5f53;
-  --primary: #e2602b;
-  --primary-strong: #c94b1a;
-  --accent: #1b998b;
-  --border: rgba(29, 27, 25, 0.12);
-  --shadow: 0 24px 60px rgba(43, 31, 22, 0.18);
-  --radius-lg: 22px;
-  --radius-md: 14px;
-  --radius-sm: 10px;
+  --font-body: "Inter", "IBM Plex Sans Arabic", sans-serif;
+  --font-display: "Inter", "IBM Plex Sans Arabic", sans-serif;
+  --bg: #f0f4f8;
+  --surface: #ffffff;
+  --surface-2: #e8eef4;
+  --text: #1a2332;
+  --muted: #5a6a7a;
+  --primary: #2c6089;
+  --primary-strong: #1e4d6e;
+  --accent: #2c6089;
+  --border: rgba(44, 96, 137, 0.15);
+  --shadow: 0 24px 60px rgba(20, 40, 65, 0.12);
+  --radius-lg: 16px;
+  --radius-md: 10px;
+  --radius-sm: 8px;
 }
 
 *,
@@ -44,9 +44,9 @@ body::before {
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(600px 300px at 10% 5%, rgba(255, 205, 150, 0.4), transparent 60%),
-    radial-gradient(500px 400px at 85% 20%, rgba(27, 153, 139, 0.18), transparent 65%),
-    radial-gradient(420px 320px at 20% 80%, rgba(226, 96, 43, 0.2), transparent 60%);
+    radial-gradient(600px 300px at 10% 5%, rgba(44, 96, 137, 0.08), transparent 60%),
+    radial-gradient(500px 400px at 85% 20%, rgba(44, 96, 137, 0.06), transparent 65%),
+    radial-gradient(420px 320px at 20% 80%, rgba(44, 96, 137, 0.04), transparent 60%);
   pointer-events: none;
   z-index: 0;
 }

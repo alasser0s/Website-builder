@@ -601,355 +601,448 @@ export function EditorShell() {
 
   return (
     <div className="builder-root">
-      <header className="builder-topbar">
-        <div>
-          <div className="builder-title">Yami Hub Builder</div>
-          <div className="builder-subtitle">{website.domain || website.internal_domain || 'Draft website'}</div>
-          {apiLabel ? <div className="builder-meta">ID {website.id} | API {apiLabel}</div> : null}
+      {/* Top Header Bar - Brand + Search + User */}
+      <header className="builder-header">
+        <div className="builder-header-right">
+          <div className="builder-logo">
+            <span className="builder-logo-badge">YAMI HUB</span>
+            <span>يامي هاب</span>
+          </div>
         </div>
-        <div className="builder-actions">
-          <div className="builder-status">{saveStateLabel}</div>
-          <button type="button" onClick={undo}>Undo</button>
-          <button type="button" onClick={redo}>Redo</button>
-          <button type="button" className="btn-primary" onClick={handleSave} disabled={isSaving || !canSave}>
-            {isSaving ? 'Saving...' : 'Save'}
+        <div className="builder-header-search">
+          <input type="search" placeholder="Search..." />
+        </div>
+        <div className="builder-header-left">
+          <button type="button" className="builder-header-icon-btn" title="Grid view">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" /><rect x="14" y="14" width="7" height="7" />
+            </svg>
           </button>
-          <button type="button" onClick={handlePublish} disabled={isPublishing}>
-            {isPublishing ? 'Publishing...' : 'Publish'}
+          <button type="button" className="builder-header-icon-btn" title="Notifications">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg>
           </button>
+          <div className="builder-user">
+            <span>أحمد محمد</span>
+            <div className="builder-user-avatar">أ</div>
+          </div>
         </div>
       </header>
 
-      <div className="builder-body">
-        <aside className="builder-panel builder-left">
-          <div className="panel-section">
-            <div className="panel-title">Pages</div>
-            <div className="panel-list">
-              {pages.map((page) => (
-                <button
-                  key={page.id}
-                  type="button"
-                  className={page.id === activePageId ? 'panel-item active' : 'panel-item'}
-                  onClick={() => handleSelectPage(page.id)}
-                >
-                  <span>{page.title}</span>
-                  <span className="panel-muted">/{page.slug || 'home'}</span>
-                </button>
-              ))}
+      <div className="builder-body-with-sidebar">
+        {/* Right Sidebar Navigation */}
+        <nav className="builder-sidebar-nav">
+          <button type="button" className="sidebar-nav-item active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
+            الصفحة الرئيسية
+          </button>
+          <button type="button" className="sidebar-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" /></svg>
+            المتجر
+          </button>
+          <button type="button" className="sidebar-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1" /><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" /><line x1="6" y1="1" x2="6" y2="4" /><line x1="10" y1="1" x2="10" y2="4" /><line x1="14" y1="1" x2="14" y2="4" /></svg>
+            قائمة الطعام
+          </button>
+          <button type="button" className="sidebar-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" /></svg>
+            التحليل
+          </button>
+          <button type="button" className="sidebar-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+            العملاء
+          </button>
+          <button type="button" className="sidebar-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2" /><line x1="1" y1="10" x2="23" y2="10" /></svg>
+            الموظفين
+          </button>
+          <button type="button" className="sidebar-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" /><line x1="4" y1="22" x2="4" y2="15" /></svg>
+            دمج
+          </button>
+          <button type="button" className="sidebar-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2" /><line x1="12" y1="18" x2="12.01" y2="18" /></svg>
+            تطبيق الهاتف
+          </button>
+          <button type="button" className="sidebar-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /></svg>
+            المنتجات
+          </button>
+          <button type="button" className="sidebar-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
+            شكاوى واستفسارات
+          </button>
+          <button type="button" className="sidebar-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg>
+            الدعم
+          </button>
+          <button type="button" className="sidebar-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>
+            اعدادات
+          </button>
+        </nav>
+
+        {/* Main Content Area */}
+        <div className="builder-main-area">
+          {/* Editor Toolbar - Actions + Page Name */}
+          <div className="editor-toolbar">
+            <div className="editor-toolbar-right">
+              <span>الصفحة: {activePage?.title || 'الرئيسية'}</span>
             </div>
-            <div className="panel-add">
-              <input
-                ref={newPageRef}
-                placeholder="New page title"
-                onKeyDown={(event) => {
-                  if (event.key !== 'Enter') return;
-                  event.preventDefault();
-                  const value = newPageRef.current?.value ?? '';
-                  if (newPageRef.current) newPageRef.current.value = '';
-                  handleCreatePage(value);
-                }}
-              />
+            <div className="editor-toolbar-left">
+              <button type="button" className="editor-toolbar-undo" onClick={undo} title="تراجع">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 14 4 9 9 4" /><path d="M20 20v-7a4 4 0 0 0-4-4H4" /></svg>
+              </button>
+              <button type="button" className="editor-toolbar-undo" onClick={redo} title="إعادة">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 14 20 9 15 4" /><path d="M4 20v-7a4 4 0 0 1 4-4h12" /></svg>
+              </button>
+              <button type="button" className="editor-toolbar-btn btn-preview">معاينة</button>
               <button
                 type="button"
-                onClick={() => {
-                  const value = newPageRef.current?.value ?? '';
-                  if (newPageRef.current) newPageRef.current.value = '';
-                  handleCreatePage(value);
-                }}
+                className="editor-toolbar-btn btn-save"
+                onClick={handleSave}
+                disabled={isSaving || !canSave}
               >
-                Add page
+                {isSaving ? 'جاري الحفظ...' : 'حفظ'}
+              </button>
+              <button
+                type="button"
+                className="editor-toolbar-btn btn-publish"
+                onClick={handlePublish}
+                disabled={isPublishing}
+              >
+                {isPublishing ? 'جاري النشر...' : 'نشر'}
               </button>
             </div>
           </div>
 
-          <div className="panel-section">
-            <div className="panel-title">Blocks</div>
-            {BLOCK_SECTIONS.map((section) => (
-              <div key={section.id} className="panel-group">
-                <div className="panel-subtitle">{section.title}</div>
+          {/* Canvas + Side Panels */}
+          <div className="builder-canvas-area">
+            <aside className="builder-panel builder-left">
+              <div className="panel-section">
+                <div className="panel-title">الصفحات</div>
                 <div className="panel-list">
-                  {section.items.map((item) => (
-                    <button key={item.id} type="button" className="panel-item" onClick={() => handleAddPreset(item.id)}>
-                      <div>
-                        <div className="panel-item-title">{item.label}</div>
-                        {item.description ? <div className="panel-item-sub">{item.description}</div> : null}
-                      </div>
+                  {pages.map((page) => (
+                    <button
+                      key={page.id}
+                      type="button"
+                      className={page.id === activePageId ? 'panel-item active' : 'panel-item'}
+                      onClick={() => handleSelectPage(page.id)}
+                    >
+                      <span>{page.title}</span>
+                      <span className="panel-muted">/{page.slug || 'home'}</span>
                     </button>
                   ))}
                 </div>
-              </div>
-            ))}
-          </div>
-        </aside>
-
-        <main
-          className="builder-canvas"
-          onClickCapture={handleCanvasClick}
-          onDragStartCapture={handleDragStart}
-          onDragOverCapture={handleDragOver}
-          onDropCapture={handleDrop}
-          onDragEndCapture={handleDragEnd}
-        >
-          <div className="canvas-frame" ref={canvasFrameRef} style={{ position: 'relative' }}>
-            {/* Selection Overlay - Delete Button and Element Label */}
-            {selectionRect && selectedNode && selectedNode.type !== 'page' && (
-              <>
-                {/* Element Type Label */}
-                <div
-                  className="element-type-label"
-                  style={{
-                    position: 'absolute',
-                    top: selectionRect.top - 28,
-                    left: selectionRect.left,
-                    zIndex: 50,
-                  }}
-                >
-                  {ELEMENT_TYPE_LABELS[selectedNode.type] || selectedNode.type}
-                </div>
-                {/* Delete Button - Show for all deletable types */}
-                {DELETABLE_TYPES.has(selectedNode.type) && (
+                <div className="panel-add">
+                  <input
+                    ref={newPageRef}
+                    placeholder="عنوان الصفحة الجديدة"
+                    onKeyDown={(event) => {
+                      if (event.key !== 'Enter') return;
+                      event.preventDefault();
+                      const value = newPageRef.current?.value ?? '';
+                      if (newPageRef.current) newPageRef.current.value = '';
+                      handleCreatePage(value);
+                    }}
+                  />
                   <button
                     type="button"
-                    className="component-delete-btn"
-                    data-editor-interactive="true"
-                    style={{
-                      position: 'absolute',
-                      top: selectionRect.top - 28,
-                      left: selectionRect.left + selectionRect.width - 60,
-                      zIndex: 50,
-                      cursor: 'pointer',
+                    onClick={() => {
+                      const value = newPageRef.current?.value ?? '';
+                      if (newPageRef.current) newPageRef.current.value = '';
+                      handleCreatePage(value);
                     }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      const parentInfo = getParentInfo(state.present.root, selectedNode.id);
-                      remove(selectedNode.id);
-                      if (parentInfo) {
-                        try {
-                          // Verify parent still exists before selecting
-                          const parent = selectNodeById(state.present.root, parentInfo.parentId);
-                          if (parent) {
-                            setActiveNodeId(parentInfo.parentId);
+                  >
+                    إضافة صفحة
+                  </button>
+                </div>
+              </div>
+
+              <div className="panel-section">
+                <div className="panel-title">العناصر</div>
+                {BLOCK_SECTIONS.map((section) => (
+                  <div key={section.id} className="panel-group">
+                    <div className="panel-subtitle">{section.title}</div>
+                    <div className="panel-list">
+                      {section.items.map((item) => (
+                        <button key={item.id} type="button" className="panel-item" onClick={() => handleAddPreset(item.id)}>
+                          <div>
+                            <div className="panel-item-title">{item.label}</div>
+                            {item.description ? <div className="panel-item-sub">{item.description}</div> : null}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </aside>
+
+            <main
+              className="builder-canvas"
+              onClickCapture={handleCanvasClick}
+              onDragStartCapture={handleDragStart}
+              onDragOverCapture={handleDragOver}
+              onDropCapture={handleDrop}
+              onDragEndCapture={handleDragEnd}
+            >
+              <div className="canvas-frame" ref={canvasFrameRef} style={{ position: 'relative' }}>
+                {/* Selection Overlay - Delete Button and Element Label */}
+                {selectionRect && selectedNode && selectedNode.type !== 'page' && (
+                  <>
+                    {/* Element Type Label */}
+                    <div
+                      className="element-type-label"
+                      style={{
+                        position: 'absolute',
+                        top: selectionRect.top - 28,
+                        left: selectionRect.left,
+                        zIndex: 50,
+                      }}
+                    >
+                      {ELEMENT_TYPE_LABELS[selectedNode.type] || selectedNode.type}
+                    </div>
+                    {/* Delete Button - Show for all deletable types */}
+                    {DELETABLE_TYPES.has(selectedNode.type) && (
+                      <button
+                        type="button"
+                        className="component-delete-btn"
+                        data-editor-interactive="true"
+                        style={{
+                          position: 'absolute',
+                          top: selectionRect.top - 28,
+                          left: selectionRect.left + selectionRect.width - 60,
+                          zIndex: 50,
+                          cursor: 'pointer',
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          const parentInfo = getParentInfo(state.present.root, selectedNode.id);
+                          remove(selectedNode.id);
+                          if (parentInfo) {
+                            try {
+                              const parent = selectNodeById(state.present.root, parentInfo.parentId);
+                              if (parent) {
+                                setActiveNodeId(parentInfo.parentId);
+                              } else {
+                                setActiveNodeId(null as any);
+                              }
+                            } catch (err) {
+                              setActiveNodeId(null as any);
+                            }
                           } else {
                             setActiveNodeId(null as any);
                           }
-                        } catch (err) {
-                          setActiveNodeId(null as any);
-                        }
-                      } else {
-                        setActiveNodeId(null as any);
+                        }}
+                      >
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM8 9h8v10H8V9zm7.5-5l-1-1h-5l-1 1H5v2h14V4h-3.5z" />
+                        </svg>
+                        حذف
+                      </button>
+                    )}
+                    {/* Corner Handles - All 4 corners */}
+                    <div
+                      className="selection-corner selection-corner--tl"
+                      style={{
+                        position: 'absolute',
+                        top: selectionRect.top - 6,
+                        left: selectionRect.left - 6,
+                        zIndex: 49,
+                      }}
+                    />
+                    <div
+                      className="selection-corner selection-corner--tr"
+                      style={{
+                        position: 'absolute',
+                        top: selectionRect.top - 6,
+                        left: selectionRect.left + selectionRect.width - 6,
+                        zIndex: 49,
+                      }}
+                    />
+                    <div
+                      className="selection-corner selection-corner--bl"
+                      style={{
+                        position: 'absolute',
+                        top: selectionRect.top + selectionRect.height - 6,
+                        left: selectionRect.left - 6,
+                        zIndex: 49,
+                      }}
+                    />
+                    <div
+                      className="selection-corner selection-corner--br"
+                      style={{
+                        position: 'absolute',
+                        top: selectionRect.top + selectionRect.height - 6,
+                        left: selectionRect.left + selectionRect.width - 6,
+                        zIndex: 49,
+                      }}
+                    />
+                  </>
+                )}
+                {/* Text Editor Popup */}
+                {showTextPopup && selectedNode && TEXT_NODE_TYPES.has(selectedNode.type) && (
+                  <TextHoverToolbar
+                    nodeId={selectedNode.id}
+                    nodeType={selectedNode.type as 'heading' | 'paragraph' | 'button'}
+                    styles={{
+                      ...(selectedNode.data as Record<string, unknown> ?? {}),
+                      ...(selectedNode.styles as Record<string, unknown> ?? {}),
+                    }}
+                    onUpdateStyles={(id, patch) => updateStyles(id, patch)}
+                    position={popupPosition}
+                    onClose={() => setShowTextPopup(false)}
+                  />
+                )}
+                {/* Image Editor Popup */}
+                {showImagePopup && selectedNode && selectedNode.type === 'image' && (
+                  <ImageEditorPopup
+                    nodeId={selectedNode.id}
+                    currentSrc={((selectedNode.data as Record<string, unknown>)?.src as string) ?? ''}
+                    objectFit={
+                      ((selectedNode.styles as Record<string, unknown>)?.objectFit as string) ??
+                      ((selectedNode.data as Record<string, unknown>)?.objectFit as string) ??
+                      'cover'
+                    }
+                    position={popupPosition}
+                    onClose={() => setShowImagePopup(false)}
+                    onUpdateStyles={(id, styles) => updateStyles(id, styles)}
+                    onUpload={async (file) => {
+                      try {
+                        const signedUpload = await createSignedUpload(file.name, file.type);
+                        const publicUrl = await uploadFileToSignedUrl(file, signedUpload);
+                        updateData(selectedNode.id, { src: publicUrl });
+                      } catch (err: any) {
+                        setError(err?.message || 'Failed to upload image');
                       }
                     }}
-                  >
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM8 9h8v10H8V9zm7.5-5l-1-1h-5l-1 1H5v2h14V4h-3.5z" />
-                    </svg>
-                    حذف
-                  </button>
+                  />
                 )}
-                {/* Corner Handles - All 4 corners */}
-                <div
-                  className="selection-corner selection-corner--tl"
-                  style={{
-                    position: 'absolute',
-                    top: selectionRect.top - 6,
-                    left: selectionRect.left - 6,
-                    zIndex: 49,
-                  }}
-                />
-                <div
-                  className="selection-corner selection-corner--tr"
-                  style={{
-                    position: 'absolute',
-                    top: selectionRect.top - 6,
-                    left: selectionRect.left + selectionRect.width - 6,
-                    zIndex: 49,
-                  }}
-                />
-                <div
-                  className="selection-corner selection-corner--bl"
-                  style={{
-                    position: 'absolute',
-                    top: selectionRect.top + selectionRect.height - 6,
-                    left: selectionRect.left - 6,
-                    zIndex: 49,
-                  }}
-                />
-                <div
-                  className="selection-corner selection-corner--br"
-                  style={{
-                    position: 'absolute',
-                    top: selectionRect.top + selectionRect.height - 6,
-                    left: selectionRect.left + selectionRect.width - 6,
-                    zIndex: 49,
-                  }}
-                />
-              </>
-            )}
-            {/* Text Editor Popup */}
-            {showTextPopup && selectedNode && TEXT_NODE_TYPES.has(selectedNode.type) && (
-              <TextHoverToolbar
-                nodeId={selectedNode.id}
-                nodeType={selectedNode.type as 'heading' | 'paragraph' | 'button'}
-                // Merge data (base) with styles (overrides) so toolbar sees all values
-                styles={{
-                  ...(selectedNode.data as Record<string, unknown> ?? {}),
-                  ...(selectedNode.styles as Record<string, unknown> ?? {}),
-                }}
-                onUpdateStyles={(id, patch) => updateStyles(id, patch)}
-                position={popupPosition}
-                onClose={() => setShowTextPopup(false)}
-              />
-            )}
-            {/* Image Editor Popup */}
-            {showImagePopup && selectedNode && selectedNode.type === 'image' && (
-              <ImageEditorPopup
-                nodeId={selectedNode.id}
-                currentSrc={((selectedNode.data as Record<string, unknown>)?.src as string) ?? ''}
-                // Priority: styles.objectFit → data.objectFit → 'cover'
-                objectFit={
-                  ((selectedNode.styles as Record<string, unknown>)?.objectFit as string) ??
-                  ((selectedNode.data as Record<string, unknown>)?.objectFit as string) ??
-                  'cover'
-                }
-                position={popupPosition}
-                onClose={() => setShowImagePopup(false)}
-                onUpdateStyles={(id, styles) => updateStyles(id, styles)}
-                onUpload={async (file) => {
-                  try {
-                    const signedUpload = await createSignedUpload(file.name, file.type);
-                    const publicUrl = await uploadFileToSignedUrl(file, signedUpload);
-                    updateData(selectedNode.id, { src: publicUrl });
-                  } catch (err: any) {
-                    setError(err?.message || 'Failed to upload image');
-                  }
-                }}
-              />
-            )}
-            <BlueprintProvider
-              snapshot={state.present}
-              actions={{ addComponent, reorder, wrapInContainer, remove, moveNode, wrapAndMove }}
-            >
-              <Renderer nodeId={state.present.root.id} />
-            </BlueprintProvider>
-          </div>
-        </main>
+                <BlueprintProvider
+                  snapshot={state.present}
+                  actions={{ addComponent, reorder, wrapInContainer, remove, moveNode, wrapAndMove }}
+                >
+                  <Renderer nodeId={state.present.root.id} />
+                </BlueprintProvider>
+              </div>
+            </main>
 
-        <aside className="builder-panel builder-right">
-          <div className="panel-section">
-            <div className="panel-title">Page Settings</div>
-            {activePage ? (
-              <div className="panel-form">
-                <label className="panel-field">
-                  <span>Title</span>
-                  <input
-                    value={pageDraft.title}
-                    onChange={(event) => setPageDraft((prev) => ({ ...prev, title: event.target.value }))}
-                  />
-                </label>
-                <label className="panel-field">
-                  <span>Slug</span>
-                  <input
-                    value={pageDraft.slug}
-                    onChange={(event) => setPageDraft((prev) => ({ ...prev, slug: event.target.value }))}
-                    aria-invalid={slugError ? true : undefined}
-                  />
-                  <div className="panel-hint">Used in the page URL.</div>
-                  {slugError ? <div className="panel-hint error">{slugError}</div> : null}
-                </label>
-                <label className="panel-field">
-                  <span>SEO title</span>
-                  <input
-                    value={pageDraft.seo_title}
-                    onChange={(event) => setPageDraft((prev) => ({ ...prev, seo_title: event.target.value }))}
-                  />
-                </label>
-                <label className="panel-field">
-                  <span>SEO description</span>
-                  <textarea
-                    rows={3}
-                    value={pageDraft.seo_description}
-                    onChange={(event) => setPageDraft((prev) => ({ ...prev, seo_description: event.target.value }))}
-                  />
-                </label>
-                <label className="panel-field">
-                  <span>Priority</span>
-                  <input
-                    type="number"
-                    min="0"
-                    max="1"
-                    step="0.1"
-                    value={pageDraft.priority}
-                    onChange={(event) => setPageDraft((prev) => ({ ...prev, priority: event.target.value }))}
-                  />
-                </label>
-                <label className="panel-field">
-                  <span>Changefreq</span>
-                  <select
-                    value={pageDraft.changefreq}
-                    onChange={(event) => setPageDraft((prev) => ({ ...prev, changefreq: event.target.value }))}
-                  >
-                    <option value="">Auto</option>
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly">Monthly</option>
-                    <option value="yearly">Yearly</option>
-                    <option value="never">Never</option>
-                  </select>
-                </label>
-                <button type="button" onClick={handleSave} disabled={isSaving || !canSave}>
-                  {isSaving ? 'Saving...' : 'Save page'}
-                </button>
-              </div>
-            ) : (
-              <div>Select a page to edit settings.</div>
-            )}
-          </div>
-          <div className="panel-section">
-            <div className="panel-title">Content</div>
-            {activeNodeId ? (
-              <ContentPanel nodeId={activeNodeId} snapshot={state.present} updateData={updateData} />
-            ) : (
-              <div>Select a component</div>
-            )}
-          </div>
-          <div className="panel-section">
-            <div className="panel-title">Styles</div>
-            {activeNodeId ? (
-              <StylesPanel nodeId={activeNodeId} snapshot={state.present} updateStyles={updateStyles} />
-            ) : (
-              <div>Select a component</div>
-            )}
-          </div>
-          <div className="panel-section">
-            <div className="panel-title">Guidance</div>
-            {!selectedNode ? (
-              <div className="panel-hint">Click any block in the canvas to edit its content or styles.</div>
-            ) : (
-              <div style={{ display: 'grid', gap: 8 }}>
-                <div className="panel-hint">
-                  Selected <strong>{selectedNode.type}</strong> · <span style={{ fontFamily: 'monospace' }}>{selectedNode.id}</span>
-                </div>
-                {['section', 'container', 'row', 'column', 'page'].includes(selectedNode.type) ? (
-                  <div className="panel-hint">
-                    Layout nodes control spacing and structure. Use Styles for padding/background and Content for row settings.
+            <aside className="builder-panel builder-right">
+              <div className="panel-section">
+                <div className="panel-title">إعدادات الصفحة</div>
+                {activePage ? (
+                  <div className="panel-form">
+                    <label className="panel-field">
+                      <span>العنوان</span>
+                      <input
+                        value={pageDraft.title}
+                        onChange={(event) => setPageDraft((prev) => ({ ...prev, title: event.target.value }))}
+                      />
+                    </label>
+                    <label className="panel-field">
+                      <span>الرابط</span>
+                      <input
+                        value={pageDraft.slug}
+                        onChange={(event) => setPageDraft((prev) => ({ ...prev, slug: event.target.value }))}
+                        aria-invalid={slugError ? true : undefined}
+                      />
+                      <div className="panel-hint">يستخدم في رابط الصفحة.</div>
+                      {slugError ? <div className="panel-hint error">{slugError}</div> : null}
+                    </label>
+                    <label className="panel-field">
+                      <span>عنوان SEO</span>
+                      <input
+                        value={pageDraft.seo_title}
+                        onChange={(event) => setPageDraft((prev) => ({ ...prev, seo_title: event.target.value }))}
+                      />
+                    </label>
+                    <label className="panel-field">
+                      <span>وصف SEO</span>
+                      <textarea
+                        rows={3}
+                        value={pageDraft.seo_description}
+                        onChange={(event) => setPageDraft((prev) => ({ ...prev, seo_description: event.target.value }))}
+                      />
+                    </label>
+                    <label className="panel-field">
+                      <span>الأولوية</span>
+                      <input
+                        type="number"
+                        min="0"
+                        max="1"
+                        step="0.1"
+                        value={pageDraft.priority}
+                        onChange={(event) => setPageDraft((prev) => ({ ...prev, priority: event.target.value }))}
+                      />
+                    </label>
+                    <label className="panel-field">
+                      <span>معدل التحديث</span>
+                      <select
+                        value={pageDraft.changefreq}
+                        onChange={(event) => setPageDraft((prev) => ({ ...prev, changefreq: event.target.value }))}
+                      >
+                        <option value="">تلقائي</option>
+                        <option value="daily">يومي</option>
+                        <option value="weekly">أسبوعي</option>
+                        <option value="monthly">شهري</option>
+                        <option value="yearly">سنوي</option>
+                        <option value="never">أبداً</option>
+                      </select>
+                    </label>
+                    <button type="button" onClick={handleSave} disabled={isSaving || !canSave}>
+                      {isSaving ? 'جاري الحفظ...' : 'حفظ الصفحة'}
+                    </button>
                   </div>
-                ) : null}
-                {['heading', 'paragraph', 'button', 'image', 'list'].includes(selectedNode.type) ? (
-                  <div className="panel-hint">
-                    Content nodes edit text/media. Use Styles → Text align to center, or Heading Align for titles.
-                  </div>
-                ) : null}
-                {selectedNode.type === 'row' ? (
-                  <div className="panel-hint">Row gaps and alignment live in Content.</div>
-                ) : null}
-                {selectedNode.type === 'container' ? (
-                  <div className="panel-hint">Set Max width in Content to keep sections readable.</div>
-                ) : null}
+                ) : (
+                  <div>اختر صفحة لتعديل الإعدادات.</div>
+                )}
               </div>
-            )}
+              <div className="panel-section">
+                <div className="panel-title">المحتوى</div>
+                {activeNodeId ? (
+                  <ContentPanel nodeId={activeNodeId} snapshot={state.present} updateData={updateData} />
+                ) : (
+                  <div>اختر عنصراً</div>
+                )}
+              </div>
+              <div className="panel-section">
+                <div className="panel-title">الأنماط</div>
+                {activeNodeId ? (
+                  <StylesPanel nodeId={activeNodeId} snapshot={state.present} updateStyles={updateStyles} />
+                ) : (
+                  <div>اختر عنصراً</div>
+                )}
+              </div>
+              <div className="panel-section">
+                <div className="panel-title">إرشادات</div>
+                {!selectedNode ? (
+                  <div className="panel-hint">انقر على أي عنصر في اللوحة لتعديل محتواه أو أنماطه.</div>
+                ) : (
+                  <div style={{ display: 'grid', gap: 8 }}>
+                    <div className="panel-hint">
+                      تم تحديد <strong>{ELEMENT_TYPE_LABELS[selectedNode.type] || selectedNode.type}</strong>
+                    </div>
+                    {['section', 'container', 'row', 'column', 'page'].includes(selectedNode.type) ? (
+                      <div className="panel-hint">
+                        عناصر التخطيط تتحكم في المسافات والبنية. استخدم الأنماط للتحكم بالحشو والخلفية.
+                      </div>
+                    ) : null}
+                    {['heading', 'paragraph', 'button', 'image', 'list'].includes(selectedNode.type) ? (
+                      <div className="panel-hint">
+                        عناصر المحتوى لتعديل النص والوسائط.
+                      </div>
+                    ) : null}
+                  </div>
+                )}
+              </div>
+            </aside>
           </div>
-        </aside>
+        </div>
       </div>
       {error ? <div className="builder-toast" data-kind="error">{error}</div> : null}
       {notice ? <div className="builder-toast" data-kind={notice.kind}>{notice.message}</div> : null}
