@@ -218,10 +218,6 @@ export function EditorShell() {
     return null;
   }, [pageDraft.slug, pages, activePageId]);
   const canSave = (isDirty || pageSettingsDirty) && !(pageSettingsDirty && slugError);
-  const apiLabel = apiBase || (typeof window !== 'undefined' ? window.location.origin : '');
-  const saveStateLabel = isSaving
-    ? 'Saving...'
-    : (isDirty || pageSettingsDirty ? 'Unsaved changes' : 'Saved');
 
   useEffect(() => {
     if (!websiteId) {
