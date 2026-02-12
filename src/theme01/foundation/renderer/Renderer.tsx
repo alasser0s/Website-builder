@@ -2748,6 +2748,10 @@ const FooterSocialLinks: React.FC<{ links: SocialLink[] }> = ({ links }) => {
 // DnD wrapper
 // -----------------------------
 const WithDnD: React.FC<{ nodeId: string; children: React.ReactNode }> = ({ nodeId, children }) => {
+  // In SSR (publish), skip all editor UI — render only the content
+  const isSSR = typeof window === 'undefined';
+  if (isSSR) return <>{children}</>;
+
   const snapshot = useBlueprintRoot();
   const { wrapInContainer, moveNode, wrapAndMove } = useBlueprintActions();
   const { state, beginDrag, endDrag } = useDnd();
