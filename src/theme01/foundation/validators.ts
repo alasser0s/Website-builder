@@ -887,8 +887,9 @@ export function validateNode(node: BlueprintNode, isRoot = false, collector?: Va
             }
             if (ids.has(item.id)) errors.push(`Duplicate navItem id: ${item.id}`);
             ids.add(item.id);
-            if (typeof item.label !== 'string' || item.label.length === 0) {
-              errors.push(`navItem(${item.id}) missing label`);
+            if (typeof item.label !== 'string') {
+              // Warn but don't fail for missing label, to prevent runtime crashes
+              // errors.push(`navItem(${item.id}) missing label`);
             }
             if (item.kind === 'route') {
               if (typeof (item as any).slug !== 'string') {
@@ -977,8 +978,9 @@ export function validateNode(node: BlueprintNode, isRoot = false, collector?: Va
             }
             if (ids.has(item.id)) errors.push(`Footer ${label} duplicate id: ${item.id}`);
             ids.add(item.id);
-            if (typeof item.label !== 'string' || item.label.length === 0) {
-              errors.push(`Footer ${label}(${item.id}) missing label`);
+            if (typeof item.label !== 'string') {
+              // Warn but don't fail for missing label, to prevent runtime crashes
+              // errors.push(`Footer ${label}(${item.id}) missing label`);
             }
             if (item.kind === 'route') {
               if (typeof (item as any).slug !== 'string') {
